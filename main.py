@@ -117,7 +117,7 @@ if __name__ == "__main__":
         "クシェット": {"param": "%B7%B2%DD%B8%BC000", "data_id": "3010000"},
         "リクライニング": {"param": "%B7%B2%DD%20%20000", "data_id": "3010000"}
     }
-    dates_to_check = ["20260403", "20260406", "20260417"]
+    dates_to_check = ["20260403", "20260417"]
 
     # 非同期なしの直接呼び出し
     check_e5489_availability_dates(seat_configs, dates_to_check)
