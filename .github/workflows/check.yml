@@ -2,9 +2,9 @@ name: e5489 Checker
 
 on:
   schedule:
-    # 日本時間で 15分, 30分, 45分, 00分 に実行したい場合
-    - cron: '0,15,30,45 * * * *'
-  workflow_dispatch: # 手動で実行するためのボタンも追加
+    - cron: '30 20-23,0-14 * * *'
+    - cron: '30 15-16 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
