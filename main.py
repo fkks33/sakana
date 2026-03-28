@@ -92,7 +92,7 @@ def check_e5489_availability_dates(seat_types, search_conditions):
                             for img in img_elements:
                                 alt_text = img.get_attribute("alt")
 
-                                # 空席ありのみ記録
+                                # どの状態でも結果を記録（空席がある場合のみLINE送信対象にする）
                                 if alt_text not in ["残席なし", "座席なし"]:
                                     has_available_seat = True
                                     msg = (
@@ -100,12 +100,29 @@ def check_e5489_availability_dates(seat_types, search_conditions):
                                         f"【{seat_name}】: {alt_text}\n"
                                         f"予約ページ: {FIXED_RESERVATION_URL}"
                                     )
-                                    section_messages.append(msg)
+                                else:
+                                    msg = (
+                                        f"■ {condition['name']} ({condition['date']})\n"
+                                        f"【{seat_name}】: {alt_text}"
+                                    )
+                                section_messages.append(msg)
                             break
                         else:
+                            # セルに img が無かった場合も結果として記録
+                            msg = (
+                                f"■ {condition['name']} ({condition['date']})\n"
+                                f"【{seat_name}】: 情報なし"
+                            )
+                            section_messages.append(msg)
                             break
 
                     except Exception:
+                        # エラー時も該当条件の結果を残す
+                        msg = (
+                            f"■ {condition['name']} ({condition['date']})\n"
+                            f"【{seat_name}】: 取得エラー"
+                        )
+                        section_messages.append(msg)
                         break
 
                 time.sleep(1)
@@ -115,10 +132,12 @@ def check_e5489_availability_dates(seat_types, search_conditions):
         browser.close()
 
     # ==========================================
-    # LINE送信
+    # 結果を常に出力し、空席時のみLINE送信
     # ==========================================
+    final_message = "\n\n".join(result_messages)
+    print(final_message)
+
     if has_available_seat:
-        final_message = "\n\n".join(result_messages)
         send_line_message(final_message)
     else:
         print("空席なし: 通知スキップ")
