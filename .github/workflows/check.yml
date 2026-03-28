@@ -2,8 +2,10 @@ name: e5489 Checker
 
 on:
   schedule:
-    - cron: '30 20-23,0-14 * * *'
-    - cron: '30 15-16 * * *'
+    # 00分実行
+    - cron: '0 21-23,0-16 * * *'
+    # 30分実行
+    - cron: '30 20-23,0-16 * * *'
   workflow_dispatch:
 
 jobs:
@@ -27,7 +29,6 @@ jobs:
 
     - name: Run script
       env:
-        # Secretsからトークンを読み込む
         LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
         LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
       run: python main.py
