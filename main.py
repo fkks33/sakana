@@ -1,7 +1,7 @@
 import time
 import requests
 import os
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from playwright.sync_api import sync_playwright
 
 # ==========================================
@@ -29,7 +29,11 @@ def send_line_message(message):
         print(f"LINE通知送信エラー: {e}")
 
 def check_e5489_availability_dates(seat_types, search_conditions):
-    start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # ==========================================
+    # UTC → JST変換
+    # ==========================================
+    JST = timezone(timedelta(hours=9))
+    start_time = datetime.now(JST).strftime("%Y-%m-%d %H:%M:%S")
 
     result_messages = [
         "[e5489 空席照会結果]",
@@ -92,23 +96,16 @@ def check_e5489_availability_dates(seat_types, search_conditions):
                             for img in img_elements:
                                 alt_text = img.get_attribute("alt")
 
-                                # どの状態でも結果を記録（空席がある場合のみLINE送信対象にする）
                                 if alt_text not in ["残席なし", "座席なし"]:
                                     has_available_seat = True
-                                    msg = (
-                                        f"■ {condition['name']} ({condition['date']})\n"
-                                        f"【{seat_name}】: {alt_text}\n"
-                                        f"予約ページ: {FIXED_RESERVATION_URL}"
-                                    )
-                                else:
-                                    msg = (
-                                        f"■ {condition['name']} ({condition['date']})\n"
-                                        f"【{seat_name}】: {alt_text}"
-                                    )
+
+                                msg = (
+                                    f"■ {condition['name']} ({condition['date']})\n"
+                                    f"【{seat_name}】: {alt_text}"
+                                )
                                 section_messages.append(msg)
                             break
                         else:
-                            # セルに img が無かった場合も結果として記録
                             msg = (
                                 f"■ {condition['name']} ({condition['date']})\n"
                                 f"【{seat_name}】: 情報なし"
@@ -117,7 +114,6 @@ def check_e5489_availability_dates(seat_types, search_conditions):
                             break
 
                     except Exception:
-                        # エラー時も該当条件の結果を残す
                         msg = (
                             f"■ {condition['name']} ({condition['date']})\n"
                             f"【{seat_name}】: 取得エラー"
@@ -132,9 +128,14 @@ def check_e5489_availability_dates(seat_types, search_conditions):
         browser.close()
 
     # ==========================================
-    # 結果を常に出力し、空席時のみLINE送信
+    # 最終メッセージ生成
     # ==========================================
     final_message = "\n\n".join(result_messages)
+
+    # 空席がある場合のみURLを最後に追加
+    if has_available_seat:
+        final_message += f"\n\n予約ページ:\n{FIXED_RESERVATION_URL}"
+
     print(final_message)
 
     if has_available_seat:
