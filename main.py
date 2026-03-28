@@ -34,7 +34,7 @@ def check_e5489_availability_dates(seat_types, target_dates):
 
     with sync_playwright() as p:
         # headless=False にするとブラウザが立ち上がる様子が見えます
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
         for target_date in target_dates:
