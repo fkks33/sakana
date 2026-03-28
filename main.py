@@ -29,6 +29,7 @@ def send_line_message(message):
 def check_e5489_availability_dates(seat_types, target_dates):
     """e5489の空席状況を照会するメイン関数 (同期版)"""
     result_messages = ["[e5489 空席照会結果]"]
+    has_availability = False  # ひとつでも空席があれば True にするフラグ
 
     with sync_playwright() as p:
         # headless=False にするとブラウザが立ち上がる様子が見えます
@@ -83,6 +84,7 @@ def check_e5489_availability_dates(seat_types, target_dates):
                                 status_msg = f"【{seat_name}】: {alt_text}"
                                 if alt_text != "残席なし":
                                     status_msg += f"\n予約URL: {url}"
+                                    has_availability = True
                                 
                                 print(f"    {status_msg}")
                                 result_messages.append(status_msg)
@@ -102,7 +104,10 @@ def check_e5489_availability_dates(seat_types, target_dates):
     
     # 最後にまとめて送信
     final_message = "\n".join(result_messages)
-    send_line_message(final_message)
+    if has_availability:
+        send_line_message(final_message)
+    else:
+        print("空席は見つかりませんでした。LINE送信はスキップします。")
 
 # ==========================================
 # メイン実行部分
