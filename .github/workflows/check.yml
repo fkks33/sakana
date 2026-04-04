@@ -2,10 +2,8 @@ name: e5489 Checker
 
 on:
   schedule:
-    # 00分実行
-    - cron: '0 21-23,0-16 * * *'
-    # 30分実行
-    - cron: '30 20-23,0-16 * * *'
+    # JST 6:00, 12:00, 18:00 に実行 (UTC 21:00, 03:00, 09:00)
+    - cron: '0 21,3,9 * * *'
   workflow_dispatch:
 
 jobs:
