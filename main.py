@@ -36,7 +36,7 @@ def check_e5489_availability_dates(seat_types, search_conditions):
     start_time = datetime.now(JST).strftime("%Y-%m-%d %H:%M:%S")
 
     result_messages = [
-        "[e5489 空席照会結果]",
+        "[WEST EXPRESS 銀河 空席照会結果]",
         f"取得開始日時: {start_time}"
     ]
 
@@ -58,7 +58,8 @@ def check_e5489_availability_dates(seat_types, search_conditions):
         page = browser.new_page()
 
         for condition in search_conditions:
-            section_messages = []
+            # ルートと日付ごとにブロックを作成
+            block_lines = [f"■ {condition['name']} ({condition['date']})"]
 
             for seat_name, seat_info in seat_types.items():
                 train_kana_param = seat_info["param"]
@@ -75,6 +76,7 @@ def check_e5489_availability_dates(seat_types, search_conditions):
 
                 retry_count = 0
                 max_retries = 5
+                seat_status = "取得タイムアウト" # デフォルトのステータス
 
                 while retry_count < max_retries:
                     try:
@@ -98,32 +100,23 @@ def check_e5489_availability_dates(seat_types, search_conditions):
 
                                 if alt_text not in ["残席なし", "座席なし"]:
                                     has_available_seat = True
-
-                                msg = (
-                                    f"■ {condition['name']} ({condition['date']})\n"
-                                    f"【{seat_name}】: {alt_text}"
-                                )
-                                section_messages.append(msg)
+                                
+                                seat_status = alt_text
                             break
                         else:
-                            msg = (
-                                f"■ {condition['name']} ({condition['date']})\n"
-                                f"【{seat_name}】: 情報なし"
-                            )
-                            section_messages.append(msg)
+                            seat_status = "情報なし"
                             break
 
                     except Exception:
-                        msg = (
-                            f"■ {condition['name']} ({condition['date']})\n"
-                            f"【{seat_name}】: 取得エラー"
-                        )
-                        section_messages.append(msg)
+                        seat_status = "取得エラー"
                         break
 
+                # 1つの座席の取得結果をブロックに追加
+                block_lines.append(f"{seat_name}: {seat_status}")
                 time.sleep(1)
 
-            result_messages.extend(section_messages)
+            # ルート・日付ブロックを最終結果のリストに追加（改行で結合）
+            result_messages.append("\n".join(block_lines))
 
         browser.close()
 
@@ -149,7 +142,9 @@ def check_e5489_availability_dates(seat_types, search_conditions):
 if __name__ == "__main__":
     seat_configs = {
         "クシェット": {"param": "%B7%B2%DD%B8%BC000", "data_id": "3010000"},
-        "リクライニング": {"param": "%B7%B2%DD%20%20000", "data_id": "3010000"}
+        "ファーストシート": {"param": "%B7%B2%DD%CC%B1000", "data_id": "1010000"},
+        "プレミアルーム1": {"param": "%B7%B2%DD%CC1000", "data_id": "11100C1"},
+        "プレミアルーム2": {"param": "%B7%B2%DD%CC2000", "data_id": "11100D1"}
     }
 
     search_conditions = [
