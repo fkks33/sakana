@@ -30,7 +30,6 @@ def check_e5489_availability_dates(target_dates):
     # ==========================================
     # 検索条件の定義（4つの列車ルート）
     # ==========================================
-    # e5489は指定時刻「以降」の列車を検索するため、全て夕方(18:00)を指定して夜行を拾う
     base_hour = "18"
     base_minute = "00"
 
@@ -45,6 +44,20 @@ def check_e5489_availability_dates(target_dates):
     solo_seats = {"ソロ": "4110040"}
     single_seats = {"シングル(禁煙)": "4110041", "シングル(喫煙)": "4120041"}
     suntwin_seats = {"サンライズツイン(禁煙)": "4110062", "サンライズツイン(喫煙)": "4120062"}
+
+    # 出力順序の固定
+    seat_order = [
+        "ノビノビ座席",
+        "ソロ",
+        "シングル(禁煙)",
+        "シングル(喫煙)",
+        "シングルツイン(禁煙)",
+        "シングルツイン(喫煙)",
+        "サンライズツイン(禁煙)",
+        "サンライズツイン(喫煙)",
+        "シングルデラックス(禁煙)",
+        "シングルデラックス(喫煙)"
+    ]
 
     # 瀬戸・出雲のパラメータグループ
     seto_groups = [
@@ -61,7 +74,6 @@ def check_e5489_availability_dates(target_dates):
         {"param": "%BB%B2%BD%D3%BB000", "seats": suntwin_seats}
     ]
 
-    # 4つの検索ルート
     routes = [
         {"name": "サンライズ瀬戸 (東京→高松)", "depart": "%93%8C%8B%9E", "arrive": "%8D%82%8F%BC%81i%8D%81%90%EC%8C%A7%81j", "groups": seto_groups},
         {"name": "サンライズ出雲 (東京→出雲市)", "depart": "%93%8C%8B%9E", "arrive": "%8Fo%89_%8Es", "groups": izumo_groups},
@@ -84,21 +96,23 @@ def check_e5489_availability_dates(target_dates):
     start_time = datetime.now(JST).strftime("%Y-%m-%d %H:%M:%S")
 
     final_messages = [
-        "【今夜の日の出予報】",
+        "【今夜の日の出情報】\n",
         f"取得開始日時: {start_time}"
     ]
-
-    has_any_available_seat = False
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
         for date in target_dates:
-            available_list = []
-            unavailable_dict = {route["name"]: [] for route in routes}
+            # 複数日指定された場合を考慮し、日付の区切りを挿入
+            if len(target_dates) > 1:
+                final_messages.append(f"\n【対象日: {date}】")
 
             for route in routes:
+                # この列車の各座席状況を格納（初期値は取得失敗や情報無とする）
+                route_results = {seat: "情報無" for seat in seat_order}
+
                 for group in route["groups"]:
                     train_kana_param = group["param"]
                     seats_to_check = group["seats"]
@@ -130,7 +144,7 @@ def check_e5489_availability_dates(target_dates):
                             try:
                                 page.wait_for_selector("td[data-search-id]", timeout=5000)
                             except Exception:
-                                pass # 要素が出ない場合（満席や運行なし等）もスルー
+                                pass # 要素が出ない場合もスルー
 
                             page_loaded = True
                             break
@@ -140,9 +154,9 @@ def check_e5489_availability_dates(target_dates):
                             time.sleep(2)
 
                     if not page_loaded:
-                        # ページロード失敗時はすべてエラー扱い
+                        # ロード失敗
                         for seat_name in seats_to_check.keys():
-                            unavailable_dict[route["name"]].append(f"{seat_name}(エラー)")
+                            route_results[seat_name] = "エラー"
                         time.sleep(1)
                         continue
 
@@ -153,46 +167,34 @@ def check_e5489_availability_dates(target_dates):
                             img_elements = page.query_selector_all(selector)
 
                             if img_elements:
-                                found = False
                                 for img in img_elements:
                                     alt_text = img.get_attribute("alt")
-                                    if alt_text not in ["残席なし", "座席なし"]:
-                                        has_any_available_seat = True
-                                        # 空席ありの場合は優先リストに追加し、該当URLも付与
-                                        available_list.append(f"・{route['name']} - 【{seat_name}】: {alt_text}\n  URL: {url}")
-                                        found = True
+                                    if alt_text:
+                                        route_results[seat_name] = alt_text
                                         break
-                                
-                                if not found:
-                                    # 残席なし等の場合
-                                    unavailable_dict[route["name"]].append(seat_name)
-                            else:
-                                unavailable_dict[route["name"]].append(f"{seat_name}(情報無)")
                         except Exception:
-                            unavailable_dict[route["name"]].append(f"{seat_name}(取得失敗)")
+                            route_results[seat_name] = "取得失敗"
 
-                    time.sleep(1) # サーバ負荷軽減のインターバル
+                    time.sleep(1)
 
-            # ------------------------------------------
-            # 1日分のメッセージを成形
-            # ------------------------------------------
-            date_msg = f"\n====================\n■ {date} の空席状況\n===================="
-            
-            # 【空きがある座席】（優先表示）
-            if available_list:
-                date_msg += "\n\n【空席あり】\n" + "\n\n".join(available_list)
-            else:
-                date_msg += "\n\n【空席あり】\n・該当なし"
-
-            # 【空きがない座席】（下にまとめて表示）
-            date_msg += "\n\n【満席 / 情報なし一覧】"
-            for r_name, u_seats in unavailable_dict.items():
-                if u_seats:
-                    # 見やすくするためにカンマ区切りで結合
-                    seats_str = ", ".join(u_seats)
-                    date_msg += f"\n・{r_name}:\n  {seats_str}"
+                # 1列車分の出力を成形
+                route_msg = f"\n■ {route['name']}"
+                printed_seats_count = 0 # 出力した座席数をカウント
                 
-            final_messages.append(date_msg)
+                for seat in seat_order:
+                    status = route_results[seat]
+                    # "残席なし" の場合は出力せずスキップ
+                    if status == "残席なし":
+                        continue
+                        
+                    route_msg += f"\n{seat}:{status}"
+                    printed_seats_count += 1
+                
+                # 1つも出力する座席がなかった（すべて「残席なし」だった）場合
+                if printed_seats_count == 0:
+                    route_msg += "\n　　≪　残　席　な　し　≫"
+                
+                final_messages.append(route_msg)
 
         browser.close()
 
@@ -202,18 +204,13 @@ def check_e5489_availability_dates(target_dates):
     final_output = "\n".join(final_messages)
     print(final_output)
 
-    # 空席が1つでもあればLINEへ通知（毎回の満席通知を避ける仕様）
-    if has_any_available_seat:
-        send_line_message(final_output)
-    else:
-        print("\n全日程で空席なし: LINE通知をスキップしました")
+    # 空き状況にかかわらず常にLINEへ通知
+    send_line_message(final_output)
 
 # ==========================================
 # メイン
 # ==========================================
 if __name__ == "__main__":
-    # 今日の日付を日本時間(JST)で検索対象とする
     today = datetime.now(timezone(timedelta(hours=9))).strftime("%Y%m%d")
     target_dates = [today]
-
     check_e5489_availability_dates(target_dates)
