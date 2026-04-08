@@ -26,10 +26,59 @@ def send_line_message(message):
     except requests.exceptions.RequestException as e:
         print(f"LINE通知送信エラー: {e}")
 
+# ==========================================
+# 気象庁API 天気情報取得
+# ==========================================
+def get_weather_info():
+    targets = [
+        {"display": "東京", "code": "130000", "temp_city": "東京"},
+        {"display": "高松", "code": "370000", "temp_city": "高松"},
+        {"display": "出雲", "code": "320000", "temp_city": "松江"} 
+    ]
+    
+    weather_lines = ["\n～本日の天気～"]
+    
+    for target in targets:
+        url = f"https://www.jma.go.jp/bosai/forecast/data/forecast/{target['code']}.json"
+        
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+
+            # [0]番目の要素（短期予報）を取得
+            short_term = data[0]
+
+            # 1. 天気の抽出
+            weather = short_term['timeSeries'][0]['areas'][0]['weathers'][0]
+            weather = weather.replace('\u3000', ' ').replace('\n', '')
+
+            # 2. 気温の抽出
+            temp_areas = short_term['timeSeries'][2]['areas']
+            temp_max = "--"
+            
+            for area in temp_areas:
+                if area['area']['name'] == target['temp_city']:
+                    try:
+                        # 配列の長さが変わる時間帯があるため、念のためtry-exceptで囲む
+                        temp_max = area['temps'][1]
+                    except IndexError:
+                        # 取得できない時間帯は "--" のままにするか、[0]を取得するなどの処理
+                        temp_max = area['temps'][0] if len(area['temps']) > 0 else "--"
+                    break
+
+            weather_lines.append(f"{target['display']} : {weather} / {temp_max}℃")
+
+        except Exception as e:
+            weather_lines.append(f"{target['display']} : データ取得エラー")
+            print(f"天気取得エラー({target['display']}): {e}")
+
+    return "\n".join(weather_lines)
+
+# ==========================================
+# e5489 空席状況チェック処理
+# ==========================================
 def check_e5489_availability_dates(target_dates):
-    # ==========================================
-    # 検索条件の定義（4つの列車ルート）
-    # ==========================================
     base_hour = "18"
     base_minute = "00"
 
@@ -105,12 +154,10 @@ def check_e5489_availability_dates(target_dates):
         page = browser.new_page()
 
         for date in target_dates:
-            # 複数日指定された場合を考慮し、日付の区切りを挿入
             if len(target_dates) > 1:
                 final_messages.append(f"\n【対象日: {date}】")
 
             for route in routes:
-                # この列車の各座席状況を格納（初期値は取得失敗や情報無とする）
                 route_results = {seat: "情報無" for seat in seat_order}
 
                 for group in route["groups"]:
@@ -144,7 +191,7 @@ def check_e5489_availability_dates(target_dates):
                             try:
                                 page.wait_for_selector("td[data-search-id]", timeout=5000)
                             except Exception:
-                                pass # 要素が出ない場合もスルー
+                                pass
 
                             page_loaded = True
                             break
@@ -154,13 +201,11 @@ def check_e5489_availability_dates(target_dates):
                             time.sleep(2)
 
                     if not page_loaded:
-                        # ロード失敗
                         for seat_name in seats_to_check.keys():
                             route_results[seat_name] = "エラー"
                         time.sleep(1)
                         continue
 
-                    # 座席の空き状況をチェック
                     for seat_name, data_search_id in seats_to_check.items():
                         try:
                             selector = f"td[data-search-id='{data_search_id}'] img"
@@ -177,26 +222,29 @@ def check_e5489_availability_dates(target_dates):
 
                     time.sleep(1)
 
-                # 1列車分の出力を成形
                 route_msg = f"\n■ {route['name']}"
-                printed_seats_count = 0 # 出力した座席数をカウント
+                printed_seats_count = 0 
                 
                 for seat in seat_order:
                     status = route_results[seat]
-                    # "残席なし" の場合は出力せずスキップ
                     if status == "残席なし":
                         continue
                         
                     route_msg += f"\n{seat}:{status}"
                     printed_seats_count += 1
                 
-                # 1つも出力する座席がなかった（すべて「残席なし」だった）場合
                 if printed_seats_count == 0:
                     route_msg += "\n　　≪　残　席　な　し　≫"
                 
                 final_messages.append(route_msg)
 
         browser.close()
+
+    # ==========================================
+    # 天気情報の取得と追加（ここを追加）
+    # ==========================================
+    weather_info = get_weather_info()
+    final_messages.append(weather_info)
 
     # ==========================================
     # 最終メッセージの出力とLINE通知
