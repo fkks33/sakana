@@ -53,24 +53,27 @@ def get_weather_info():
             weather = short_term['timeSeries'][0]['areas'][0]['weathers'][0]
             weather = weather.replace('\u3000', ' ').replace('\n', '')
 
-            # 2. 気温の抽出
+            # 2. 気温の抽出 (最低気温・最高気温)
             temp_areas = short_term['timeSeries'][2]['areas']
+            temp_min = "--"
             temp_max = "--"
             
             for area in temp_areas:
                 if area['area']['name'] == target['temp_city']:
-                    try:
-                        # 配列の長さが変わる時間帯があるため、念のためtry-exceptで囲む
-                        temp_max = area['temps'][1]
-                    except IndexError:
-                        # 取得できない時間帯は "--" のままにするか、[0]を取得するなどの処理
-                        temp_max = area['temps'][0] if len(area['temps']) > 0 else "--"
+                    temps = area.get('temps', [])
+                    if len(temps) >= 2:
+                        temp_min = temps[0]
+                        temp_max = temps[1]
+                    elif len(temps) == 1:
+                        # 取得時間が遅く、最高気温のみの発表になっている場合のフォールバック
+                        temp_max = temps[0]
                     break
 
-            weather_lines.append(f"{target['display']} : {weather} / {temp_max}℃")
+            # 指定されたフォーマットで追加
+            weather_lines.append(f"■ {target['display']}...{temp_min}℃ / {temp_max}℃\n{weather}")
 
         except Exception as e:
-            weather_lines.append(f"{target['display']} : データ取得エラー")
+            weather_lines.append(f"■ {target['display']}...データ取得エラー\nエラー詳細: {e}")
             print(f"天気取得エラー({target['display']}): {e}")
 
     return "\n".join(weather_lines)
@@ -142,11 +145,16 @@ def check_e5489_availability_dates(target_dates):
     )
 
     JST = timezone(timedelta(hours=9))
-    start_time = datetime.now(JST).strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now(JST)
+    
+    # 曜日の取得と日時フォーマット
+    weekdays = ["月", "火", "水", "木", "金", "土", "日"]
+    weekday_str = weekdays[now.weekday()]
+    start_time = now.strftime(f"%Y-%m-%d({weekday_str}) %H:%M:%S")
 
     final_messages = [
         "【今夜の日の出情報】\n",
-        f"取得開始日時: {start_time}"
+        f"{start_time}時点"
     ]
 
     with sync_playwright() as p:
@@ -230,7 +238,7 @@ def check_e5489_availability_dates(target_dates):
                     if status == "残席なし":
                         continue
                         
-                    route_msg += f"\n{seat}:{status}"
+                    route_msg += f"\n{seat}：{status}"
                     printed_seats_count += 1
                 
                 if printed_seats_count == 0:
@@ -241,7 +249,7 @@ def check_e5489_availability_dates(target_dates):
         browser.close()
 
     # ==========================================
-    # 天気情報の取得と追加（ここを追加）
+    # 天気情報の取得と追加
     # ==========================================
     weather_info = get_weather_info()
     final_messages.append(weather_info)
