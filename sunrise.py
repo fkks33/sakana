@@ -223,6 +223,14 @@ def check_e5489_availability_dates(target_dates):
                                 for img in img_elements:
                                     alt_text = img.get_attribute("alt")
                                     if alt_text:
+                                        # 【追加】テキストを記号に変換
+                                        if alt_text == "空席あり":
+                                            alt_text = "〇"
+                                        elif alt_text == "空席残りわずか":
+                                            alt_text = "△"
+                                        elif alt_text == "残席なし":
+                                            alt_text = "×"
+
                                         route_results[seat_name] = alt_text
                                         break
                         except Exception:
@@ -235,7 +243,9 @@ def check_e5489_availability_dates(target_dates):
                 
                 for seat in seat_order:
                     status = route_results[seat]
-                    if status == "残席なし":
+                    
+                    # 【修正】「×」と念のため元の「残席なし」をスキップするように条件を変更
+                    if status == "×" or status == "残席なし":
                         continue
                         
                     route_msg += f"\n{seat}：{status}"
