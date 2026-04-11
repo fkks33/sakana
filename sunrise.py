@@ -8,14 +8,17 @@ from playwright.sync_api import sync_playwright
 # LINE Messaging API の設定
 # ==========================================
 LINE_CHANNEL_ACCESS_TOKEN = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
+LINE_USER_ID = os.environ.get("LINE_USER_ID")  # 1. ユーザーIDを取得
 
 def send_line_message(message):
-    url = "https://api.line.me/v2/bot/message/broadcast"
+    # ブロードキャストからユニキャスト(push)に変更
+    url = "https://api.line.me/v2/bot/message/push"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {LINE_CHANNEL_ACCESS_TOKEN}"
     }
     payload = {
+        "to": LINE_USER_ID,  # 宛先を指定
         "messages": [{"type": "text", "text": message}]
     }
 
@@ -69,8 +72,25 @@ def get_weather_info():
                         temp_max = temps[0]
                     break
 
+            # 2-A. 気温の表示フォーマット調整（同じ値、または最低気温がない場合は最高気温のみ）
+            if temp_min == temp_max or temp_min == "--":
+                temp_str = f"{temp_max}℃"
+            else:
+                temp_str = f"{temp_min}℃ / {temp_max}℃"
+
+            # 3. 降水確率の抽出
+            pop_areas = short_term['timeSeries'][1]['areas']
+            pop_str = ""
+            for area in pop_areas:
+                if area['area']['name'] == target['temp_city']:
+                    pops = area.get('pops', [])
+                    if pops:
+                        # リストをスラッシュで結合して表示（例: 0/10/10/20%）
+                        pop_str = f" ☔ {'/'.join(pops)}%"
+                    break
+
             # 指定されたフォーマットで追加
-            weather_lines.append(f"■ {target['display']}...{temp_min}℃ / {temp_max}℃\n{weather}")
+            weather_lines.append(f"■ {target['display']}...{temp_str}{pop_str}\n{weather}")
 
         except Exception as e:
             weather_lines.append(f"■ {target['display']}...データ取得エラー\nエラー詳細: {e}")
@@ -223,7 +243,6 @@ def check_e5489_availability_dates(target_dates):
                                 for img in img_elements:
                                     alt_text = img.get_attribute("alt")
                                     if alt_text:
-                                        # 【追加】テキストを記号に変換
                                         if alt_text == "空席あり":
                                             alt_text = "〇"
                                         elif alt_text == "空席残りわずか":
@@ -244,7 +263,6 @@ def check_e5489_availability_dates(target_dates):
                 for seat in seat_order:
                     status = route_results[seat]
                     
-                    # 【修正】「×」と念のため元の「残席なし」をスキップするように条件を変更
                     if status == "×" or status == "残席なし":
                         continue
                         
