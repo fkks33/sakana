@@ -176,22 +176,6 @@ if __name__ == "__main__":
             "name": "京都→出雲市",
             "depart": "%8B%9E%93s",
             "arrive": "%8Fo%89_%8Es",
-            "date": "20260417",
-            "hour": "21",
-            "minute": "00"
-        },
-        {
-            "name": "出雲市→京都",
-            "depart": "%8Fo%89_%8Es",
-            "arrive": "%8B%9E%93s",
-            "date": "20260418",
-            "hour": "09",
-            "minute": "00"
-        },
-        {
-            "name": "京都→出雲市",
-            "depart": "%8B%9E%93s",
-            "arrive": "%8Fo%89_%8Es",
             "date": "20260420",
             "hour": "21",
             "minute": "00"
@@ -201,6 +185,22 @@ if __name__ == "__main__":
             "depart": "%8Fo%89_%8Es",
             "arrive": "%8B%9E%93s",
             "date": "20260422",
+            "hour": "09",
+            "minute": "00"
+        },
+                {
+            "name": "京都→出雲市",
+            "depart": "%8B%9E%93s",
+            "arrive": "%8Fo%89_%8Es",
+            "date": "20260515",
+            "hour": "21",
+            "minute": "00"
+        },
+        {
+            "name": "出雲市→京都",
+            "depart": "%8Fo%89_%8Es",
+            "arrive": "%8B%9E%93s",
+            "date": "20260516",
             "hour": "09",
             "minute": "00"
         }
