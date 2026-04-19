@@ -41,7 +41,7 @@ def check_e5489_availability_dates(seat_types, search_conditions):
     start_time = now.strftime(f"%Y-%m-%d({weekday_str}) %H:%M:%S")
 
     result_messages = [
-        "[WEST EXPRESS 銀河 空席照会結果]",
+        "[WEST EXPRESS 銀河 空席通知]",
         f"{start_time}時点"
     ]
 
@@ -165,45 +165,61 @@ def check_e5489_availability_dates(seat_types, search_conditions):
 # ==========================================
 if __name__ == "__main__":
     seat_configs = {
+        # "リクライニング": {"param": "%B7%B2%DD%20%20000", "data_id": "3010000"},
         "クシェット": {"param": "%B7%B2%DD%B8%BC000", "data_id": "3010000"},
         "ファーストシート": {"param": "%B7%B2%DD%CC%B1000", "data_id": "1010000"},
         "プレミアルーム1": {"param": "%B7%B2%DD%CC1000", "data_id": "11100C1"},
         "プレミアルーム2": {"param": "%B7%B2%DD%CC2000", "data_id": "11100D1"}
     }
 
-    search_conditions = [
-        {
-            "name": "京都→出雲市",
-            "depart": "%8B%9E%93s",
-            "arrive": "%8Fo%89_%8Es",
-            "date": "20260420",
-            "hour": "21",
-            "minute": "00"
-        },
-        {
-            "name": "出雲市→京都",
-            "depart": "%8Fo%89_%8Es",
-            "arrive": "%8B%9E%93s",
-            "date": "20260422",
-            "hour": "09",
-            "minute": "00"
-        },
-                {
-            "name": "京都→出雲市",
-            "depart": "%8B%9E%93s",
-            "arrive": "%8Fo%89_%8Es",
-            "date": "20260515",
-            "hour": "21",
-            "minute": "00"
-        },
-        {
-            "name": "出雲市→京都",
-            "depart": "%8Fo%89_%8Es",
-            "arrive": "%8B%9E%93s",
-            "date": "20260516",
-            "hour": "09",
-            "minute": "00"
-        }
+    import calendar
+    JST = timezone(timedelta(hours=9))
+    today = datetime.now(JST).date()
+
+    # 1か月先の計算
+    next_month_year = today.year
+    next_month = today.month + 1
+    if next_month > 12:
+        next_month_year += 1
+        next_month = 1
+    
+    max_day = calendar.monthrange(next_month_year, next_month)[1]
+    next_month_day = min(today.day, max_day)
+    one_month_later = today.replace(year=next_month_year, month=next_month, day=next_month_day)
+
+    kyoto_to_izumo = [
+        "20260420", "20260515", "20260518", "20260529", 
+        "20260601", "20260612", "20260615", "20260626", "20260629"
     ]
+    izumo_to_kyoto = [
+        "20260422", "20260516", "20260520", "20260530", 
+        "20260603", "20260613", "20260617", "20260627", "20260701"
+    ]
+
+    search_conditions = []
+
+    for d_str in kyoto_to_izumo:
+        d_date = datetime.strptime(d_str, "%Y%m%d").date()
+        if today <= d_date <= one_month_later:
+            search_conditions.append({
+                "name": "京都→出雲市",
+                "depart": "%8B%9E%93s",
+                "arrive": "%8Fo%89_%8Es",
+                "date": d_str,
+                "hour": "21",
+                "minute": "00"
+            })
+
+    for d_str in izumo_to_kyoto:
+        d_date = datetime.strptime(d_str, "%Y%m%d").date()
+        if today <= d_date <= one_month_later:
+            search_conditions.append({
+                "name": "出雲市→京都",
+                "depart": "%8Fo%89_%8Es",
+                "arrive": "%8B%9E%93s",
+                "date": d_str,
+                "hour": "09",
+                "minute": "00"
+            })
 
     check_e5489_availability_dates(seat_configs, search_conditions)
