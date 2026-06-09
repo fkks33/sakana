@@ -1,37 +1,12 @@
 import time
 import requests
-import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from playwright.sync_api import sync_playwright
 
-# ==========================================
-# LINE Messaging API の設定
-# ==========================================
-LINE_CHANNEL_ACCESS_TOKEN = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
-LINE_USER_ID = os.environ.get("LINE_USER_ID")  # 1. ユーザーIDを取得
+from utils.line_api import send_line_message
+from utils.date_utils import get_jst_now
+from utils.scraper import fetch_seat_statuses
 
-def send_line_message(message):
-    # ブロードキャストからユニキャスト(push)に変更
-    url = "https://api.line.me/v2/bot/message/push"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {LINE_CHANNEL_ACCESS_TOKEN}"
-    }
-    payload = {
-        "to": LINE_USER_ID,  # 宛先を指定
-        "messages": [{"type": "text", "text": message}]
-    }
-
-    try:
-        response = requests.post(url, headers=headers, json=payload)
-        response.raise_for_status()
-        print("LINE通知送信: 成功")
-    except requests.exceptions.RequestException as e:
-        print(f"LINE通知送信エラー: {e}")
-
-# ==========================================
-# 気象庁API 天気情報取得
-# ==========================================
 def get_weather_info():
     targets = [
         {"display": "東京", "code": "130000", "temp_city": "東京"},
@@ -49,14 +24,11 @@ def get_weather_info():
             response.raise_for_status()
             data = response.json()
 
-            # [0]番目の要素（短期予報）を取得
             short_term = data[0]
 
-            # 1. 天気の抽出
             weather = short_term['timeSeries'][0]['areas'][0]['weathers'][0]
             weather = weather.replace('\u3000', ' ').replace('\n', '')
 
-            # 2. 気温の抽出 (最低気温・最高気温)
             temp_areas = short_term['timeSeries'][2]['areas']
             temp_min = "--"
             temp_max = "--"
@@ -68,28 +40,23 @@ def get_weather_info():
                         temp_min = temps[0]
                         temp_max = temps[1]
                     elif len(temps) == 1:
-                        # 取得時間が遅く、最高気温のみの発表になっている場合のフォールバック
                         temp_max = temps[0]
                     break
 
-            # 2-A. 気温の表示フォーマット調整（同じ値、または最低気温がない場合は最高気温のみ）
             if temp_min == temp_max or temp_min == "--":
                 temp_str = f"{temp_max}℃"
             else:
                 temp_str = f"{temp_min}℃ / {temp_max}℃"
 
-            # 3. 降水確率の抽出
             pop_areas = short_term['timeSeries'][1]['areas']
             pop_str = ""
             for area in pop_areas:
                 if area['area']['name'] == target['temp_city']:
                     pops = area.get('pops', [])
                     if pops:
-                        # リストをスラッシュで結合して表示（例: 0/10/10/20%）
                         pop_str = f" ☔ {'/'.join(pops)}%"
                     break
 
-            # 指定されたフォーマットで追加
             weather_lines.append(f"■ {target['display']}...{temp_str}{pop_str}\n{weather}")
 
         except Exception as e:
@@ -98,14 +65,10 @@ def get_weather_info():
 
     return "\n".join(weather_lines)
 
-# ==========================================
-# e5489 空席状況チェック処理
-# ==========================================
 def check_e5489_availability_dates(target_dates):
     base_hour = "18"
     base_minute = "00"
 
-    # 座席とデータIDの定義
     base_seats = {
         "ノビノビ座席": "3010000",
         "シングルツイン(禁煙)": "4110042",
@@ -117,21 +80,12 @@ def check_e5489_availability_dates(target_dates):
     single_seats = {"シングル(禁煙)": "4110041", "シングル(喫煙)": "4120041"}
     suntwin_seats = {"サンライズツイン(禁煙)": "4110062", "サンライズツイン(喫煙)": "4120062"}
 
-    # 出力順序の固定
     seat_order = [
-        "ノビノビ座席",
-        "ソロ",
-        "シングル(禁煙)",
-        "シングル(喫煙)",
-        "シングルツイン(禁煙)",
-        "シングルツイン(喫煙)",
-        "サンライズツイン(禁煙)",
-        "サンライズツイン(喫煙)",
-        "シングルデラックス(禁煙)",
-        "シングルデラックス(喫煙)"
+        "ノビノビ座席", "ソロ", "シングル(禁煙)", "シングル(喫煙)",
+        "シングルツイン(禁煙)", "シングルツイン(喫煙)", "サンライズツイン(禁煙)",
+        "サンライズツイン(喫煙)", "シングルデラックス(禁煙)", "シングルデラックス(喫煙)"
     ]
 
-    # 瀬戸・出雲のパラメータグループ
     seto_groups = [
         {"param": "%BB%BE%C4%20%20000", "seats": base_seats},
         {"param": "%BB%BE%C4%BF%20000", "seats": solo_seats},
@@ -164,10 +118,7 @@ def check_e5489_availability_dates(target_dates):
         "inputSpecificBriefTrainKana1={param}&SequenceType=0"
     )
 
-    JST = timezone(timedelta(hours=9))
-    now = datetime.now(JST)
-    
-    # 曜日の取得と日時フォーマット
+    now = get_jst_now()
     weekdays = ["月", "火", "水", "木", "金", "土", "日"]
     weekday_str = weekdays[now.weekday()]
     start_time = now.strftime(f"%Y-%m-%d({weekday_str}) %H:%M:%S")
@@ -201,59 +152,11 @@ def check_e5489_availability_dates(target_dates):
                         param=train_kana_param
                     )
 
-                    retry_count = 0
-                    max_retries = 5
-                    page_loaded = False
+                    data_search_ids = list(seats_to_check.values())
+                    statuses = fetch_seat_statuses(page, url, data_search_ids)
 
-                    while retry_count < max_retries:
-                        try:
-                            page.goto(url)
-                            page.wait_for_load_state("domcontentloaded")
-
-                            content = page.content()
-                            if "混雑中" in content or "20100801" in content:
-                                retry_count += 1
-                                time.sleep(2)
-                                continue
-
-                            try:
-                                page.wait_for_selector("td[data-search-id]", timeout=5000)
-                            except Exception:
-                                pass
-
-                            page_loaded = True
-                            break
-
-                        except Exception:
-                            retry_count += 1
-                            time.sleep(2)
-
-                    if not page_loaded:
-                        for seat_name in seats_to_check.keys():
-                            route_results[seat_name] = "エラー"
-                        time.sleep(1)
-                        continue
-
-                    for seat_name, data_search_id in seats_to_check.items():
-                        try:
-                            selector = f"td[data-search-id='{data_search_id}'] img"
-                            img_elements = page.query_selector_all(selector)
-
-                            if img_elements:
-                                for img in img_elements:
-                                    alt_text = img.get_attribute("alt")
-                                    if alt_text:
-                                        if alt_text == "空席あり":
-                                            alt_text = "〇"
-                                        elif alt_text == "空席残りわずか":
-                                            alt_text = "△"
-                                        elif alt_text == "残席なし":
-                                            alt_text = "×"
-
-                                        route_results[seat_name] = alt_text
-                                        break
-                        except Exception:
-                            route_results[seat_name] = "取得失敗"
+                    for seat_name, ds_id in seats_to_check.items():
+                        route_results[seat_name] = statuses.get(ds_id, "取得失敗")
 
                     time.sleep(1)
 
@@ -262,8 +165,7 @@ def check_e5489_availability_dates(target_dates):
                 
                 for seat in seat_order:
                     status = route_results[seat]
-                    
-                    if status == "×" or status == "残席なし":
+                    if status in ["×", "残席なし", "座席なし"]:
                         continue
                         
                     route_msg += f"\n{seat}：{status}"
@@ -276,25 +178,14 @@ def check_e5489_availability_dates(target_dates):
 
         browser.close()
 
-    # ==========================================
-    # 天気情報の取得と追加
-    # ==========================================
     weather_info = get_weather_info()
     final_messages.append(weather_info)
 
-    # ==========================================
-    # 最終メッセージの出力とLINE通知
-    # ==========================================
     final_output = "\n".join(final_messages)
     print(final_output)
 
-    # 空き状況にかかわらず常にLINEへ通知
-    send_line_message(final_output)
+    send_line_message(final_output, method="push")
 
-# ==========================================
-# メイン
-# ==========================================
 if __name__ == "__main__":
-    today = datetime.now(timezone(timedelta(hours=9))).strftime("%Y%m%d")
-    target_dates = [today]
-    check_e5489_availability_dates(target_dates)
+    today = get_jst_now().strftime("%Y%m%d")
+    check_e5489_availability_dates([today])

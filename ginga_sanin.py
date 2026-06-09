@@ -1,80 +1,53 @@
-import time
-import requests
-import os
 import json
-from datetime import datetime, timedelta, timezone
+import time
+from datetime import datetime
 from playwright.sync_api import sync_playwright
 
-# ==========================================
-# LINE Messaging API の設定
-# ==========================================
-LINE_CHANNEL_ACCESS_TOKEN = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
+from utils.line_api import send_line_message
+from utils.history import load_state, save_state, update_history
+from utils.date_utils import filter_target_dates, get_jst_now
+from utils.scraper import fetch_seat_statuses
 
 FIXED_RESERVATION_URL = "https://www.jr-odekake.net/railroad/westexginga/reservation/#route-sanin"
-HISTORY_FILE = "docs/history.json"
 
-def send_line_message(message):
-    url = "https://api.line.me/v2/bot/message/broadcast"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {LINE_CHANNEL_ACCESS_TOKEN}"
+def load_config():
+    with open("config.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def main():
+    config = load_config()
+    kyoto_to_izumo = filter_target_dates(config.get("sanin", {}).get("kyoto_to_izumo", []))
+    izumo_to_kyoto = filter_target_dates(config.get("sanin", {}).get("izumo_to_kyoto", []))
+
+    seat_configs = {
+        "クシェット": {"param": "%B7%B2%DD%B8%BC000", "data_id": "3010000"},
+        "ファーストシート": {"param": "%B7%B2%DD%CC%B1000", "data_id": "1010000"},
+        "プレミアルーム1": {"param": "%B7%B2%DD%CC1000", "data_id": "11100C1"},
+        "プレミアルーム2": {"param": "%B7%B2%DD%CC2000", "data_id": "11100D1"}
     }
-    payload = {
-        "messages": [{"type": "text", "text": message}]
-    }
 
-    try:
-        response = requests.post(url, headers=headers, json=payload)
-        response.raise_for_status()
-        print("LINE通知送信: 成功")
-    except requests.exceptions.RequestException as e:
-        print(f"LINE通知送信エラー: {e}")
+    search_conditions = []
+    for d_str in kyoto_to_izumo:
+        search_conditions.append({
+            "name": "京都→出雲市",
+            "depart": "%8B%9E%93s",
+            "arrive": "%8Fo%89_%8Es",
+            "date": d_str,
+            "hour": "21",
+            "minute": "00"
+        })
 
-def update_history(course_name, results_list):
-    os.makedirs("docs", exist_ok=True)
-    history = []
-    if os.path.exists(HISTORY_FILE):
-        try:
-            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                history = json.load(f)
-        except Exception as e:
-            print(f"履歴ファイルのロードエラー: {e}")
-            
-    JST = timezone(timedelta(hours=9))
-    now_iso = datetime.now(JST).isoformat()
-    
-    history.append({
-        "timestamp": now_iso,
-        "course": course_name,
-        "results": results_list
-    })
-    
-    # 過去30日以内のデータのみ保持する
-    thirty_days_ago = datetime.now(JST) - timedelta(days=30)
-    filtered_history = []
-    for run in history:
-        try:
-            run_time = datetime.fromisoformat(run["timestamp"])
-            if run_time >= thirty_days_ago:
-                filtered_history.append(run)
-        except Exception:
-            filtered_history.append(run)
-            
-    try:
-        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-            json.dump(filtered_history, f, ensure_ascii=False, indent=2)
-        print("履歴データの更新: 成功")
-    except Exception as e:
-        print(f"履歴データの保存エラー: {e}")
+    for d_str in izumo_to_kyoto:
+        search_conditions.append({
+            "name": "出雲市→京都",
+            "depart": "%8Fo%89_%8Es",
+            "arrive": "%8B%9E%93s",
+            "date": d_str,
+            "hour": "09",
+            "minute": "00"
+        })
 
-def check_e5489_availability_dates(seat_types, search_conditions):
-    # ==========================================
-    # UTC → JST変換 と 日時のフォーマット設定
-    # ==========================================
-    JST = timezone(timedelta(hours=9))
-    now = datetime.now(JST)
-    
-    # 曜日の取得
+    now = get_jst_now()
     weekdays = ["月", "火", "水", "木", "金", "土", "日"]
     weekday_str = weekdays[now.weekday()]
     start_time = now.strftime(f"%Y-%m-%d({weekday_str}) %H:%M:%S")
@@ -86,6 +59,10 @@ def check_e5489_availability_dates(seat_types, search_conditions):
 
     has_available_seat = False
     results_list = []
+    
+    # 状態管理（kinanを参考にsaninにも適用）
+    state = load_state()
+    new_state = {}
 
     base_url = (
         "https://e5489.jr-odekake.net/e5489/cspc/CBDayTimeArriveSelRsvMyDiaPC?"
@@ -103,11 +80,10 @@ def check_e5489_availability_dates(seat_types, search_conditions):
         page = browser.new_page()
 
         for condition in search_conditions:
-            # ルートと日付ごとにブロックを作成
             block_lines = [f"■ {condition['name']} ({condition['date']})"]
-            printed_seats_count = 0  # 出力した座席数をカウント
+            printed_seats_count = 0
 
-            for seat_name, seat_info in seat_types.items():
+            for seat_name, seat_info in seat_configs.items():
                 train_kana_param = seat_info["param"]
                 data_search_id = seat_info["data_id"]
 
@@ -120,55 +96,11 @@ def check_e5489_availability_dates(seat_types, search_conditions):
                     param=train_kana_param
                 )
 
-                retry_count = 0
-                max_retries = 5
-                seat_status = "取得タイムアウト" # デフォルトのステータス
-
-                while retry_count < max_retries:
-                    try:
-                        page.goto(url)
-                        page.wait_for_load_state("domcontentloaded")
-
-                        content = page.content()
-                        if "混雑中" in content or "20100801" in content:
-                            retry_count += 1
-                            time.sleep(2)
-                            continue
-
-                        selector = f"td[data-search-id='{data_search_id}'] img"
-                        page.wait_for_selector(selector, timeout=5000)
-
-                        img_elements = page.query_selector_all(selector)
-
-                        if img_elements:
-                            for img in img_elements:
-                                alt_text = img.get_attribute("alt")
-
-                                # 空席があるかどうかの判定 (元のまま)
-                                if alt_text not in ["残席なし", "座席なし"]:
-                                    has_available_seat = True
-                                
-                                # 【追加】テキストを記号に変換
-                                if alt_text == "空席あり":
-                                    alt_text = "〇"
-                                elif alt_text == "空席残りわずか":
-                                    alt_text = "△"
-                                elif alt_text == "残席なし":
-                                    alt_text = "×"
-
-                                seat_status = alt_text
-                            break
-                        else:
-                            seat_status = "情報なし"
-                            break
-
-                    except Exception:
-                        seat_status = "取得エラー"
-                        break
+                statuses = fetch_seat_statuses(page, url, [data_search_id])
+                seat_status = statuses.get(data_search_id, "情報なし")
 
                 time.sleep(1)
 
-                # 履歴用レコードの追加
                 results_list.append({
                     "date": condition["date"],
                     "direction": "kudari" if condition["name"] == "京都→出雲市" else "nobori",
@@ -176,100 +108,64 @@ def check_e5489_availability_dates(seat_types, search_conditions):
                     "status": seat_status
                 })
 
-                # 1つの座席の取得結果をブロックに追加（×・残席なしの場合は表示をスキップ）
-                if seat_status == "×" or seat_status == "残席なし":
-                    continue
+                # saninでの重複通知抑止ロジック
+                state_key = f"sanin_{condition['date']}_{condition['name']}_{seat_name}"
+                should_notify_seat = False
                 
-                block_lines.append(f"{seat_name}: {seat_status}")
-                printed_seats_count += 1
+                if seat_status in ["〇", "△"]:
+                    prev_consecutive = state.get(state_key, {}).get("consecutive_count", 0)
+                    if prev_consecutive >= 4:
+                        consecutive_count = 1
+                        should_notify_seat = True
+                    elif prev_consecutive >= 1:
+                        consecutive_count = prev_consecutive + 1
+                        should_notify_seat = False
+                    else:
+                        consecutive_count = 1
+                        should_notify_seat = True
+                        
+                    new_state[state_key] = {
+                        "status": seat_status,
+                        "consecutive_count": consecutive_count
+                    }
+                else:
+                    if seat_status not in ["×", "残席なし", "座席なし"]:
+                        should_notify_seat = True
 
-            # 1つも表示されなかった場合の処理
+                if seat_status not in ["×", "残席なし", "座席なし"]:
+                    has_available_seat = True
+                
+                if should_notify_seat and seat_status not in ["×", "残席なし", "座席なし"]:
+                    block_lines.append(f"{seat_name}: {seat_status}")
+                    printed_seats_count += 1
+
             if printed_seats_count == 0:
-                block_lines.append("　　≪　残　席　な　し　≫")
-
-            # ルート・日付ブロックを最終結果のリストに追加（改行で結合）
+                block_lines.append("　　≪　新　規　の　空　席　な　し　≫")
+            
+            # If all seats were 'no new empty seats', we might skip appending the whole block if desired.
+            # But let's keep it to show we checked.
             result_messages.append("\n".join(block_lines))
 
         browser.close()
 
-    update_history("sanin", results_list) # 履歴の追記
+    # saninのstateも共有ファイルに保存（上書きしないようにマージ）
+    merged_state = {**state, **new_state}
+    save_state(merged_state)
+    
+    update_history("sanin", results_list)
 
-    # ==========================================
-    # 最終メッセージ生成
-    # ==========================================
     final_message = "\n\n".join(result_messages)
 
-    # 空席がある場合のみURLを最後に追加
     if has_available_seat:
         final_message += f"\n\n予約ページ:\n{FIXED_RESERVATION_URL}"
 
     print(final_message)
 
-    if has_available_seat:
-        send_line_message(final_message)
+    # 通知対象があれば送る
+    if has_available_seat and any("〇" in msg or "△" in msg for msg in result_messages):
+        send_line_message(final_message, method="broadcast")
     else:
-        print("空席なし: 通知スキップ")
+        print("新規通知対象の空席なし: 通知スキップ")
 
-# ==========================================
-# メイン
-# ==========================================
 if __name__ == "__main__":
-    seat_configs = {
-        # "リクライニング": {"param": "%B7%B2%DD%20%20000", "data_id": "3010000"},
-        "クシェット": {"param": "%B7%B2%DD%B8%BC000", "data_id": "3010000"},
-        "ファーストシート": {"param": "%B7%B2%DD%CC%B1000", "data_id": "1010000"},
-        "プレミアルーム1": {"param": "%B7%B2%DD%CC1000", "data_id": "11100C1"},
-        "プレミアルーム2": {"param": "%B7%B2%DD%CC2000", "data_id": "11100D1"}
-    }
-
-    import calendar
-    JST = timezone(timedelta(hours=9))
-    today = datetime.now(JST).date()
-
-    # 1か月先の計算
-    next_month_year = today.year
-    next_month = today.month + 1
-    if next_month > 12:
-        next_month_year += 1
-        next_month = 1
-    
-    max_day = calendar.monthrange(next_month_year, next_month)[1]
-    next_month_day = min(today.day, max_day)
-    one_month_later = today.replace(year=next_month_year, month=next_month, day=next_month_day)
-
-    kyoto_to_izumo = [
-        "20260420", "20260515", "20260518", "20260529", 
-        "20260601", "20260612", "20260615", "20260626", "20260629"
-    ]
-    izumo_to_kyoto = [
-        "20260422", "20260516", "20260520", "20260530", 
-        "20260603", "20260613", "20260617", "20260627", "20260701"
-    ]
-
-    search_conditions = []
-
-    for d_str in kyoto_to_izumo:
-        d_date = datetime.strptime(d_str, "%Y%m%d").date()
-        if today <= d_date <= one_month_later:
-            search_conditions.append({
-                "name": "京都→出雲市",
-                "depart": "%8B%9E%93s",
-                "arrive": "%8Fo%89_%8Es",
-                "date": d_str,
-                "hour": "21",
-                "minute": "00"
-            })
-
-    for d_str in izumo_to_kyoto:
-        d_date = datetime.strptime(d_str, "%Y%m%d").date()
-        if today <= d_date <= one_month_later:
-            search_conditions.append({
-                "name": "出雲市→京都",
-                "depart": "%8Fo%89_%8Es",
-                "arrive": "%8B%9E%93s",
-                "date": d_str,
-                "hour": "09",
-                "minute": "00"
-            })
-
-    check_e5489_availability_dates(seat_configs, search_conditions)
+    main()
