@@ -1,6 +1,7 @@
 import time
 import requests
 import os
+import json
 from datetime import datetime, timedelta, timezone
 from playwright.sync_api import sync_playwright
 
@@ -10,6 +11,7 @@ from playwright.sync_api import sync_playwright
 LINE_CHANNEL_ACCESS_TOKEN = os.environ.get("LINE_CHANNEL_ACCESS_TOKEN")
 
 FIXED_RESERVATION_URL = "https://www.jr-odekake.net/railroad/westexginga/reservation/#route-sanin"
+HISTORY_FILE = "docs/history.json"
 
 def send_line_message(message):
     url = "https://api.line.me/v2/bot/message/broadcast"
@@ -27,6 +29,43 @@ def send_line_message(message):
         print("LINE通知送信: 成功")
     except requests.exceptions.RequestException as e:
         print(f"LINE通知送信エラー: {e}")
+
+def update_history(course_name, results_list):
+    os.makedirs("docs", exist_ok=True)
+    history = []
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                history = json.load(f)
+        except Exception as e:
+            print(f"履歴ファイルのロードエラー: {e}")
+            
+    JST = timezone(timedelta(hours=9))
+    now_iso = datetime.now(JST).isoformat()
+    
+    history.append({
+        "timestamp": now_iso,
+        "course": course_name,
+        "results": results_list
+    })
+    
+    # 過去30日以内のデータのみ保持する
+    thirty_days_ago = datetime.now(JST) - timedelta(days=30)
+    filtered_history = []
+    for run in history:
+        try:
+            run_time = datetime.fromisoformat(run["timestamp"])
+            if run_time >= thirty_days_ago:
+                filtered_history.append(run)
+        except Exception:
+            filtered_history.append(run)
+            
+    try:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(filtered_history, f, ensure_ascii=False, indent=2)
+        print("履歴データの更新: 成功")
+    except Exception as e:
+        print(f"履歴データの保存エラー: {e}")
 
 def check_e5489_availability_dates(seat_types, search_conditions):
     # ==========================================
@@ -46,6 +85,7 @@ def check_e5489_availability_dates(seat_types, search_conditions):
     ]
 
     has_available_seat = False
+    results_list = []
 
     base_url = (
         "https://e5489.jr-odekake.net/e5489/cspc/CBDayTimeArriveSelRsvMyDiaPC?"
@@ -128,6 +168,14 @@ def check_e5489_availability_dates(seat_types, search_conditions):
 
                 time.sleep(1)
 
+                # 履歴用レコードの追加
+                results_list.append({
+                    "date": condition["date"],
+                    "direction": "kudari" if condition["name"] == "京都→出雲市" else "nobori",
+                    "seat": seat_name,
+                    "status": seat_status
+                })
+
                 # 1つの座席の取得結果をブロックに追加（×・残席なしの場合は表示をスキップ）
                 if seat_status == "×" or seat_status == "残席なし":
                     continue
@@ -143,6 +191,8 @@ def check_e5489_availability_dates(seat_types, search_conditions):
             result_messages.append("\n".join(block_lines))
 
         browser.close()
+
+    update_history("sanin", results_list) # 履歴の追記
 
     # ==========================================
     # 最終メッセージ生成

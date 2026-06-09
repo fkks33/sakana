@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEST EXPRESS 銀河 - 空席状況ダッシュボード</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <span class="brand-logo">WEG</span>
+                <h1 class="brand-title">WEST EXPRESS 銀河 <span>Dashboard</span></h1>
+            </div>
+            <div class="system-status">
+                <span class="status-indicator online"></span>
+                <span id="last-updated">ロード中...</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <!-- コース切り替えタブ -->
+        <nav class="course-tabs">
+            <button class="tab-btn active" data-course="kinan">紀南コース (京都 ⇔ 新宮)</button>
+            <button class="tab-btn" data-course="sanin">山陰コース (京都 ⇔ 出雲市)</button>
+        </nav>
+
+        <!-- ダッシュボードコンテンツ -->
+        <div class="dashboard-grid">
+            
+            <!-- 最新空席状況カード (フルサイズ) -->
+            <section class="card col-span-3">
+                <div class="card-header">
+                    <h2 class="card-title">最新の空席状況</h2>
+                    <span class="badge badge-info">1ヶ月先までの運行日対象</span>
+                </div>
+                <div class="card-content">
+                    <div class="table-responsive">
+                        <table class="status-table" id="current-status-table">
+                            <thead>
+                                <tr>
+                                    <th>運行日</th>
+                                    <th>区間 (方向)</th>
+                                    <th>クシェット</th>
+                                    <th>ファーストシート</th>
+                                    <th>プレミアルーム1</th>
+                                    <th>プレミアルーム2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="text-center">データを読み込んでいます...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ドーナツグラフ: 席種別の空席出現率 -->
+            <section class="card col-span-1">
+                <div class="card-header">
+                    <h2 class="card-title">席種別空席出現率</h2>
+                </div>
+                <div class="card-content chart-container">
+                    <canvas id="seat-availability-chart"></canvas>
+                </div>
+            </section>
+
+            <!-- バーチャート: 時間帯別空席検知数 -->
+            <section class="card col-span-2">
+                <div class="card-header">
+                    <h2 class="card-title">時間帯別空席検知件数 (過去30日)</h2>
+                </div>
+                <div class="card-content chart-container">
+                    <canvas id="time-availability-chart"></canvas>
+                </div>
+            </section>
+
+            <!-- 空席検知タイムライン -->
+            <section class="card col-span-3">
+                <div class="card-header">
+                    <h2 class="card-title">空席検知タイムライン (直近)</h2>
+                </div>
+                <div class="card-content">
+                    <ul class="timeline" id="timeline-list">
+                        <li class="timeline-empty">過去30日以内に検知された空席はありません。</li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; 2026 e5489 Playwright Automation & Dashboard</p>
+    </footer>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
