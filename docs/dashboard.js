@@ -208,7 +208,7 @@ function renderSeatChart(courseData) {
                     '#ffea00'  // プレミアルーム2
                 ],
                 borderWidth: 2,
-                borderColor: '#111b3d'
+                borderColor: '#ffffff'
             }]
         },
         options: {
@@ -218,7 +218,7 @@ function renderSeatChart(courseData) {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#8a99ad',
+                        color: '#64748b',
                         font: { family: 'Inter' }
                     }
                 },
@@ -296,12 +296,12 @@ function renderTimeChart(courseData) {
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: { color: '#8a99ad', stepSize: 1 }
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                    ticks: { color: '#64748b', stepSize: 1 }
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { color: '#8a99ad' }
+                    ticks: { color: '#64748b' }
                 }
             },
             plugins: {

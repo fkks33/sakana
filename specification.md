@@ -1,0 +1,53 @@
+# Sakana - 列車空席照会システム 仕様書
+
+## 1. システム概要
+本システムは、JR西日本の予約サイト「e5489」を定期的にスクレイピングし、「WEST EXPRESS 銀河（紀南・山陰コース）」および「サンライズ出雲・瀬戸」の空席状況を自動取得するシステムです。
+空席が検知された場合は、LINE Messaging APIを通じてユーザーに通知を送信します。また、取得した空席情報は履歴として保存され、Webダッシュボードから視覚的に確認できます。
+
+## 2. システムアーキテクチャ
+システムはPythonによるスクレイピング処理と、静的HTML/JSによるダッシュボードで構成されています。
+
+### 2.1 構成ファイル一覧
+- **`ginga_kinan.py`**: WEST EXPRESS 銀河（紀南コース）の空席状況を取得し、LINEへ通知（Broadcast）するメインスクリプト。
+- **`ginga_sanin.py`**: WEST EXPRESS 銀河（山陰コース）の空席状況を取得し、LINEへ通知（Broadcast）するメインスクリプト。
+- **`sunrise.py`**: サンライズ瀬戸・出雲の空席状況と気象庁APIから天気情報を取得し、LINEへ通知（Push）するスクリプト。
+- **`config.json`**: 各路線の対象運行日を一元管理する設定ファイル。日付の追加・変更はここで行います。
+- **`utils/`**: 各メインスクリプトから呼び出される共通処理群。
+  - `date_utils.py`: 現在の日時や、1ヶ月先までの日付計算処理。
+  - `history.py`: 空席状況の履歴（`docs/history.json`）および状態（`last_state.json`）の保存・管理。
+  - `line_api.py`: LINE Messaging APIを利用したメッセージ送信処理。
+  - `scraper.py`: Playwrightを利用したe5489への自動アクセス・要素抽出ロジック。
+
+### 2.2 データ永続化
+- **`last_state.json`**: 直近の空席状態を記憶し、同じ座席が継続して空席の場合にLINE通知を抑制（4回に1回通知等）するためのファイル。
+- **`docs/history.json`**: ダッシュボード表示用。過去30日間のスクレイピング結果（タイムスタンプ、路線、座席ステータス）を保持します。
+
+## 3. ダッシュボード仕様
+`docs/` ディレクトリ配下のファイル群により、GitHub Pages等でホスティング可能な静的ダッシュボードを提供します。
+
+- **`index.html`**: ダッシュボードの構造。
+- **`style.css`**: モダンなライトテーマ（白基調）を採用し、スマホ・PC両対応のレスポンシブデザイン。
+- **`dashboard.js`**: `history.json` を非同期で読み込み、以下の情報を表示します。
+  - 最新の空席状況一覧（テーブル形式）
+  - 席種別空席出現率（ドーナツグラフ - Chart.js）
+  - 時間帯別空席検知件数（棒グラフ - Chart.js）
+  - 直近の空席検知タイムライン
+
+## 4. 実行フローと自動化要件
+各スクリプトは、外部のタスクスケジューラ（cron、Windows Task Scheduler、GitHub Actions等）を用いて定期実行されることを想定しています。
+
+1. スケジューラが各Pythonスクリプト（`ginga_kinan.py`等）を実行。
+2. スクリプトが `config.json` から対象運行日を読み込み、現在日から1ヶ月以内のものをフィルタリング。
+3. `utils/scraper.py` (Playwright) がヘッドレスブラウザを起動し、e5489の空席照会結果ページへアクセス。
+4. 対象座席のアイコン（〇、△、×）を判別。
+5. 新規に空席（〇、△）が検知された場合のみ、`utils/line_api.py` 経由でLINE通知を送信（連続検知の場合は通知スキップロジックが働く）。
+6. 結果を `last_state.json` および `docs/history.json` に記録。
+
+## 5. 動作環境と依存関係
+- **Python 3.x**
+- 依存パッケージ:
+  - `playwright` (Chromiumブラウザが必要: `playwright install chromium`)
+  - `requests`
+- 環境変数:
+  - `LINE_CHANNEL_ACCESS_TOKEN`
+  - `LINE_USER_ID` (sunrise.pyでのPush通知用)
