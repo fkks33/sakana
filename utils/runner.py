@@ -51,30 +51,36 @@ def run_availability_check(course_name, display_name, target_dates_str, search_c
             block_header = f"■{date_formatted} {depart_name}→{arrive_name}"
             block_seats = []
 
-            # Group seats by param to minimize page loads
+            # param ごとにグループ化してアクセスを減らす (無駄な処理の削減)
             param_groups = {}
             for seat_name, seat_info in condition["seat_configs"].items():
                 param = seat_info["param"]
                 if param not in param_groups:
                     param_groups[param] = []
-                param_groups[param].append((seat_name, seat_info["data_id"]))
+                param_groups[param].append({
+                    "seat_name": seat_name,
+                    "data_id": seat_info["data_id"]
+                })
 
-            for param, seats in param_groups.items():
+            for train_kana_param, seats_in_param in param_groups.items():
                 url = base_url.format(
                     depart=condition["depart"],
                     arrive=condition["arrive"],
                     date=condition["date"],
                     hour=condition["hour"],
                     minute=condition["minute"],
-                    param=param
+                    param=train_kana_param
                 )
 
-                # Fetch all data_ids for this param at once
-                data_ids = [s[1] for s in seats]
-                statuses = fetch_seat_statuses(page, url, data_ids)
+                # 対象URLに対する必要な data_id を一括で指定
+                data_search_ids = [s["data_id"] for s in seats_in_param]
+                statuses = fetch_seat_statuses(page, url, data_search_ids)
+
                 time.sleep(1)
 
-                for seat_name, data_search_id in seats:
+                for seat_info in seats_in_param:
+                    seat_name = seat_info["seat_name"]
+                    data_search_id = seat_info["data_id"]
                     seat_status = statuses.get(data_search_id, "情報なし")
 
                     # Logging each access
