@@ -39,7 +39,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     line-height: 1.6;
-    display: flex;
+    display: block; /* Removed flex to fix mobile layout */
     min-height: 100vh;
     overflow-x: hidden;
 }

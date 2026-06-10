@@ -51,74 +51,81 @@ def run_availability_check(course_name, display_name, target_dates_str, search_c
             block_header = f"■{date_formatted} {depart_name}→{arrive_name}"
             block_seats = []
 
+            # Group seats by param to minimize page loads
+            param_groups = {}
             for seat_name, seat_info in condition["seat_configs"].items():
-                train_kana_param = seat_info["param"]
-                data_search_id = seat_info["data_id"]
+                param = seat_info["param"]
+                if param not in param_groups:
+                    param_groups[param] = []
+                param_groups[param].append((seat_name, seat_info["data_id"]))
 
+            for param, seats in param_groups.items():
                 url = base_url.format(
                     depart=condition["depart"],
                     arrive=condition["arrive"],
                     date=condition["date"],
                     hour=condition["hour"],
                     minute=condition["minute"],
-                    param=train_kana_param
+                    param=param
                 )
 
-                # Playwright access and result fetch
-                statuses = fetch_seat_statuses(page, url, [data_search_id])
-                seat_status = statuses.get(data_search_id, "情報なし")
-
+                # Fetch all data_ids for this param at once
+                data_ids = [s[1] for s in seats]
+                statuses = fetch_seat_statuses(page, url, data_ids)
                 time.sleep(1)
 
-                # Logging each access
-                log_entry = {
-                    "timestamp": fetch_time_iso,
-                    "train": condition.get("name", display_name),
-                    "depart": depart_name,
-                    "arrive": arrive_name,
-                    "target_date": condition["date"],
-                    "seat_type": seat_name,
-                    "result": seat_status
-                }
-                append_access_log(course_name, log_entry)
+                for seat_name, data_search_id in seats:
+                    seat_status = statuses.get(data_search_id, "情報なし")
 
-                # Append to history
-                history_results.append({
-                    "date": condition["date"],
-                    "direction": condition.get("direction", "unknown"),
-                    "seat": seat_name,
-                    "status": seat_status
-                })
-
-                # Notification logic (last_state)
-                state_key = f"{course_name}_{condition['date']}_{condition.get('name', 'train')}_{seat_name}"
-                should_notify = False
-
-                if seat_status in ["〇", "△", "○"]:
-                    prev_consecutive = state.get(state_key, {}).get("consecutive_count", 0)
-                    if prev_consecutive >= 4:
-                        consecutive_count = 1
-                        should_notify = True
-                        print(f"[{condition['date']} {condition.get('name', '')} {seat_name}] 空席継続(4回目)。通知します。")
-                    elif prev_consecutive >= 1:
-                        consecutive_count = prev_consecutive + 1
-                        print(f"[{condition['date']} {condition.get('name', '')} {seat_name}] 空席継続({consecutive_count}回目)。通知スキップ。")
-                    else:
-                        consecutive_count = 1
-                        should_notify = True
-                        print(f"[{condition['date']} {condition.get('name', '')} {seat_name}] 新規空席検知。")
-                        
-                    new_state[state_key] = {
-                        "status": seat_status,
-                        "consecutive_count": consecutive_count
+                    # Logging each access
+                    log_entry = {
+                        "timestamp": fetch_time_iso,
+                        "train": condition.get("name", display_name),
+                        "depart": depart_name,
+                        "arrive": arrive_name,
+                        "target_date": condition["date"],
+                        "seat_type": seat_name,
+                        "result": seat_status
                     }
-                else:
-                    if seat_status not in ["×", "残席なし", "座席なし"]:
-                        print(f"[{condition['date']} {condition.get('name', '')} {seat_name}] ステータス: {seat_status}")
+                    append_access_log(course_name, log_entry)
 
-                if should_notify:
-                    block_seats.append(f"　{seat_name}：{seat_status}")
-                    has_available_seat = True
+                    # Append to history
+                    history_results.append({
+                        "date": condition["date"],
+                        "direction": condition.get("direction", "unknown"),
+                        "seat": seat_name,
+                        "status": seat_status
+                    })
+
+                    # Notification logic (last_state)
+                    state_key = f"{course_name}_{condition['date']}_{condition.get('name', 'train')}_{seat_name}"
+                    should_notify = False
+
+                    if seat_status in ["〇", "△", "○"]:
+                        prev_consecutive = state.get(state_key, {}).get("consecutive_count", 0)
+                        if prev_consecutive >= 4:
+                            consecutive_count = 1
+                            should_notify = True
+                            print(f"[{condition['date']} {condition.get('name', '')} {seat_name}] 空席継続(4回目)。通知します。")
+                        elif prev_consecutive >= 1:
+                            consecutive_count = prev_consecutive + 1
+                            print(f"[{condition['date']} {condition.get('name', '')} {seat_name}] 空席継続({consecutive_count}回目)。通知スキップ。")
+                        else:
+                            consecutive_count = 1
+                            should_notify = True
+                            print(f"[{condition['date']} {condition.get('name', '')} {seat_name}] 新規空席検知。")
+                            
+                        new_state[state_key] = {
+                            "status": seat_status,
+                            "consecutive_count": consecutive_count
+                        }
+                    else:
+                        if seat_status not in ["×", "残席なし", "座席なし"]:
+                            print(f"[{condition['date']} {condition.get('name', '')} {seat_name}] ステータス: {seat_status}")
+
+                    if should_notify:
+                        block_seats.append(f"　{seat_name}：{seat_status}")
+                        has_available_seat = True
 
             if len(block_seats) > 0:
                 available_seats_lines.append(block_header)
