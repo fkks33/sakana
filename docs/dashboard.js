@@ -1,5 +1,5 @@
 // Sakana Dashboard Script - Vanilla JS
-let currentCourse = 'sanin';
+let currentCourse = 'kinan';
 let historyData = [];
 let logData = [];
 let seatChartInstance = null;
@@ -7,7 +7,7 @@ let dayChartInstance = null;
 
 // Pagination state
 let currentPage = 1;
-const itemsPerPage = 100;
+const itemsPerPage = 20;
 
 // Consts
 const courseNames = {
