@@ -3,105 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEST EXPRESS 銀河 - 空席状況ダッシュボード</title>
+    <title>Sakana Dashboard - 列車空席照会</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js CDN -->
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <header class="app-header">
-        <div class="header-container">
-            <div class="brand">
-                <span class="brand-logo">WEG</span>
-                <h1 class="brand-title">WEST EXPRESS 銀河 <span>Dashboard</span></h1>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="card-title">
+            <i class="fa-solid fa-train"></i> Sakana
+        </div>
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1><i class="fa-solid fa-train"></i> Sakana</h1>
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-group">
+                <div class="nav-title">Train Routes</div>
+                
+                <!-- Sunrise -->
+                <div class="nav-item tab-btn" data-course="sunrise">
+                    <i class="fa-solid fa-moon"></i> 寝台特急サンライズ
+                </div>
+                
+                <!-- Ginga -->
+                <div class="nav-item">
+                    <i class="fa-solid fa-star"></i> WEST EXPRESS 銀河
+                </div>
+                <div class="nav-sub">
+                    <div class="nav-item tab-btn active" data-course="sanin">山陰コース</div>
+                    <div class="nav-item tab-btn" data-course="kinan">紀南コース</div>
+                </div>
             </div>
-            <div class="system-status">
-                <span class="status-indicator online"></span>
-                <span id="last-updated">ロード中...</span>
+            
+            <div class="nav-group" style="margin-top: 40px;">
+                <div class="nav-item" onclick="window.open('https://www.jr-odekake.net/goyoyaku/e5489/', '_blank')">
+                    <i class="fa-solid fa-external-link-alt"></i> e5489 予約サイト
+                </div>
+                <div class="nav-item" onclick="window.open('https://github.com/fkks33/sakana', '_blank')">
+                    <i class="fa-brands fa-github"></i> GitHub Repository
+                </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="dashboard-container">
-        <!-- コース切り替えタブ -->
-        <nav class="course-tabs">
-            <button class="tab-btn active" data-course="kinan">紀南コース (京都 ⇔ 新宮)</button>
-            <button class="tab-btn" data-course="sanin">山陰コース (京都 ⇔ 出雲市)</button>
-        </nav>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="top-header">
+            <h2 class="page-title" id="display-title">WEST EXPRESS 銀河（山陰コース）</h2>
+            <div class="page-meta">
+                <i class="fa-regular fa-clock"></i>
+                <span id="last-updated">最終更新: 取得中...</span>
+            </div>
+        </div>
 
-        <!-- ダッシュボードコンテンツ -->
         <div class="dashboard-grid">
             
-            <!-- 最新空席状況カード (フルサイズ) -->
-            <section class="card col-span-3">
+            <!-- 最近の空席状況 -->
+            <div class="card col-8">
                 <div class="card-header">
-                    <h2 class="card-title">最新の空席状況</h2>
-                    <span class="badge badge-info">1ヶ月先までの運行日対象</span>
+                    <div class="card-title"><i class="fa-solid fa-list-check"></i> 最近の空席状況</div>
                 </div>
-                <div class="card-content">
-                    <div class="table-responsive">
-                        <table class="status-table" id="current-status-table">
-                            <thead>
-                                <tr>
-                                    <th>運行日</th>
-                                    <th>区間 (方向)</th>
-                                    <th>クシェット</th>
-                                    <th>ファーストシート</th>
-                                    <th>プレミアルーム1</th>
-                                    <th>プレミアルーム2</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="6" class="text-center">データを読み込んでいます...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-container">
+                    <table id="status-table">
+                        <thead>
+                            <tr id="status-table-header">
+                                <!-- JSで動的生成 -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JSで動的生成 -->
+                        </tbody>
+                    </table>
                 </div>
-            </section>
+            </div>
 
-            <!-- ドーナツグラフ: 席種別の空席出現率 -->
-            <section class="card col-span-1">
+            <!-- 空席出現率 (席種別) -->
+            <div class="card col-4">
                 <div class="card-header">
-                    <h2 class="card-title">席種別空席出現率</h2>
+                    <div class="card-title"><i class="fa-solid fa-chart-pie"></i> 席種別 空席出現率</div>
                 </div>
-                <div class="card-content chart-container">
-                    <canvas id="seat-availability-chart"></canvas>
+                <div class="chart-container donut-container">
+                    <canvas id="seatChart"></canvas>
                 </div>
-            </section>
+            </div>
 
-            <!-- バーチャート: 時間帯別空席検知数 -->
-            <section class="card col-span-2">
+            <!-- 空席出現率 (曜日別) -->
+            <div class="card col-8">
                 <div class="card-header">
-                    <h2 class="card-title">時間帯別空席検知件数 (過去30日)</h2>
+                    <div class="card-title"><i class="fa-solid fa-chart-bar"></i> 曜日別 空席検知傾向</div>
                 </div>
-                <div class="card-content chart-container">
-                    <canvas id="time-availability-chart"></canvas>
+                <div class="chart-container">
+                    <canvas id="dayChart"></canvas>
                 </div>
-            </section>
+            </div>
 
-            <!-- 空席検知タイムライン -->
-            <section class="card col-span-3">
+            <!-- タイムライン -->
+            <div class="card col-4">
                 <div class="card-header">
-                    <h2 class="card-title">空席検知タイムライン (直近)</h2>
+                    <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> 検知タイムライン</div>
                 </div>
-                <div class="card-content">
-                    <ul class="timeline" id="timeline-list">
-                        <li class="timeline-empty">過去30日以内に検知された空席はありません。</li>
-                    </ul>
+                <div class="timeline" id="timeline-container">
+                    <!-- JSで動的生成 -->
                 </div>
-            </section>
+            </div>
+
+            <!-- 詳細ログ (ページネーション) -->
+            <div class="card col-12">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-database"></i> アクセスログ (直近5000件)</div>
+                </div>
+                <div class="table-container">
+                    <table id="log-table">
+                        <thead>
+                            <tr>
+                                <th>取得日時</th>
+                                <th>列車名</th>
+                                <th>区間</th>
+                                <th>対象日</th>
+                                <th>席種</th>
+                                <th>結果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JSで動的生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="pagination-controls">
+                    <!-- JSで動的生成 -->
+                </div>
+            </div>
 
         </div>
     </main>
-
-    <footer class="app-footer">
-        <p>&copy; 2026 e5489 Playwright Automation & Dashboard</p>
-    </footer>
 
     <script src="dashboard.js"></script>
 </body>

@@ -1,293 +1,275 @@
-// Ginga Availability Dashboard Script
+// Sakana Dashboard Script - Vanilla JS
+let currentCourse = 'sanin';
 let historyData = [];
-let currentCourse = 'kinan';
-let seatChart = null;
-let timeChart = null;
+let logData = [];
+let seatChartInstance = null;
+let dayChartInstance = null;
 
-// 日本語の曜日マッピング
+// Pagination state
+let currentPage = 1;
+const itemsPerPage = 100;
+
+// Consts
+const courseNames = {
+    'kinan': 'WEST EXPRESS 銀河（紀南コース）',
+    'sanin': 'WEST EXPRESS 銀河（山陰コース）',
+    'sunrise': 'サンライズ出雲・瀬戸'
+};
 const weekdayKanji = ["日", "月", "火", "水", "木", "金", "土"];
+const CHART_COLORS = ['#C55A11', '#E2A03F', '#F6C879', '#F9E0B7', '#2D3748', '#718096', '#CBD5E0', '#E2E8F0', '#EDF2F7', '#F7FAFC'];
 
+// Init
 document.addEventListener('DOMContentLoaded', () => {
-    // タブクリックイベントの設定
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    tabButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            tabButtons.forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            currentCourse = e.target.dataset.course;
-            updateDashboard();
+    setupSidebar();
+    loadData();
+});
+
+function setupSidebar() {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const displayTitle = document.getElementById('display-title');
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            tabs.forEach(t => t.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            currentCourse = e.currentTarget.dataset.course;
+            displayTitle.textContent = courseNames[currentCourse];
+            currentPage = 1;
+            
+            // Close mobile menu
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+            
+            loadData();
         });
     });
 
-    // データの読み込み
-    fetchHistoryData();
-});
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+    });
 
-async function fetchHistoryData() {
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+    });
+}
+
+async function loadData() {
     try {
-        const response = await fetch('history.json');
-        if (!response.ok) {
-            throw new Error('履歴データの取得に失敗しました。');
-        }
-        historyData = await response.json();
-        
-        // 最終更新時間の更新
-        if (historyData.length > 0) {
-            const lastRun = historyData[historyData.length - 1];
-            const lastUpdatedTime = new Date(lastRun.timestamp);
-            document.getElementById('last-updated').textContent = 
-                `最終更新: ${formatDate(lastUpdatedTime)}`;
+        // Load history.json (for status, charts, timeline)
+        const histRes = await fetch('history.json');
+        if (histRes.ok) {
+            historyData = await histRes.json();
         } else {
-            document.getElementById('last-updated').textContent = 'データなし';
+            historyData = [];
+        }
+
+        // Load log_{course}.json
+        const logRes = await fetch(`log_${currentCourse}.json`);
+        if (logRes.ok) {
+            logData = await logRes.json();
+        } else {
+            logData = [];
         }
 
         updateDashboard();
-    } catch (error) {
-        console.error('Error fetching history:', error);
-        document.getElementById('last-updated').textContent = 'ロードエラー';
-        showTableMessage('データのロードに失敗しました。');
+    } catch (e) {
+        console.error('Error loading data:', e);
+        document.getElementById('last-updated').textContent = 'データ取得エラー';
     }
 }
 
 function updateDashboard() {
-    // 指定コースのデータのみフィルタリング
-    const courseData = historyData.filter(d => d.course === currentCourse);
-    
-    if (courseData.length === 0) {
-        showTableMessage('このコースの履歴データはありません。');
-        clearCharts();
-        clearTimeline();
-        return;
-    }
-
-    // 最新の空席状況テーブルを描画
-    renderStatusTable(courseData);
-
-    // 席種別の空席出現率を描画
-    renderSeatChart(courseData);
-
-    // 時間帯別の空席傾向を描画
-    renderTimeChart(courseData);
-
-    // 空席タイムラインを描画
-    renderTimeline(courseData);
+    updateLastUpdated();
+    renderStatusTable();
+    renderCharts();
+    renderTimeline();
+    renderLogs();
 }
 
-function showTableMessage(message) {
-    const tbody = document.querySelector('#current-status-table tbody');
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center">${message}</td></tr>`;
+function formatDateStr(dateStr) {
+    if (!dateStr || dateStr.length !== 8) return dateStr;
+    const y = dateStr.substring(0, 4);
+    const m = parseInt(dateStr.substring(4, 6), 10);
+    const d = parseInt(dateStr.substring(6, 8), 10);
+    const dateObj = new Date(y, m - 1, d);
+    const w = weekdayKanji[dateObj.getDay()];
+    return `${m}/${d}(${w})`;
 }
 
-function formatDate(date) {
+function formatISODate(isoStr) {
+    const date = new Date(isoStr);
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
     const h = String(date.getHours()).padStart(2, '0');
     const min = String(date.getMinutes()).padStart(2, '0');
     const s = String(date.getSeconds()).padStart(2, '0');
-    const w = weekdayKanji[date.getDay()];
-    return `${y}-${m}-${d}(${w}) ${h}:${min}:${s}`;
+    return `${y}-${m}-${d} ${h}:${min}:${s}`;
 }
 
-function renderStatusTable(courseData) {
-    const tbody = document.querySelector('#current-status-table tbody');
-    tbody.innerHTML = '';
+function updateLastUpdated() {
+    if (logData.length > 0) {
+        const lastLog = logData[logData.length - 1];
+        document.getElementById('last-updated').textContent = `最終更新: ${formatISODate(lastLog.timestamp)}`;
+    } else {
+        document.getElementById('last-updated').textContent = 'データなし';
+    }
+}
 
-    // 最も新しい実行データを使用
-    const lastRun = courseData[courseData.length - 1];
+/* ---------------------------------
+   Status Table
+--------------------------------- */
+function renderStatusTable() {
+    const courseHist = historyData.filter(d => d.course === currentCourse);
+    const tbody = document.querySelector('#status-table tbody');
+    const theadTr = document.getElementById('status-table-header');
     
-    // 日付と方向ごとに座席ステータスをマッピング
-    // キー: {date}_{direction}
+    tbody.innerHTML = '';
+    theadTr.innerHTML = '';
+
+    if (courseHist.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">最近のデータがありません</td></tr>';
+        return;
+    }
+
+    const lastRun = courseHist[courseHist.length - 1];
     const grouped = {};
+    const seatTypes = new Set();
 
     lastRun.results.forEach(res => {
         const key = `${res.date}_${res.direction}`;
         if (!grouped[key]) {
-            grouped[key] = {
-                date: res.date,
-                direction: res.direction,
-                seats: {}
-            };
+            grouped[key] = { date: res.date, direction: res.direction, seats: {} };
         }
         grouped[key].seats[res.seat] = res.status;
+        seatTypes.add(res.seat);
     });
 
-    // 曜日の計算とキー順での並び替え
+    const seatArray = Array.from(seatTypes);
+
+    // Header
+    let headHtml = '<th>対象日</th><th>方向</th>';
+    seatArray.forEach(seat => {
+        headHtml += `<th>${seat}</th>`;
+    });
+    theadTr.innerHTML = headHtml;
+
+    // Body
     const sortedKeys = Object.keys(grouped).sort();
-
-    if (sortedKeys.length === 0) {
-        showTableMessage('有効な最新データがありません。');
-        return;
-    }
-
     sortedKeys.forEach(key => {
         const item = grouped[key];
-        const dateObj = new Date(
-            parseInt(item.date.substring(0, 4)),
-            parseInt(item.date.substring(4, 6)) - 1,
-            parseInt(item.date.substring(6, 8))
-        );
-        const weekday = weekdayKanji[dateObj.getDay()];
-        const dateStr = `${item.date.substring(4, 6)}/${item.date.substring(6, 8)}(${weekday})`;
-        const directionStr = item.direction === 'kudari' ? '京都 → 新宮 (下り)' : '新宮 → 京都 (上り)';
-        const directionClass = item.direction === 'kudari' ? 'kudari-route' : 'nobori-route';
-
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><strong>${dateStr}</strong></td>
-            <td><span class="route-label ${directionClass}">${directionStr}</span></td>
-            <td>${getStatusIndicator(item.seats['クシェット'])}</td>
-            <td>${getStatusIndicator(item.seats['ファーストシート'])}</td>
-            <td>${getStatusIndicator(item.seats['プレミアルーム1'])}</td>
-            <td>${getStatusIndicator(item.seats['プレミアルーム2'])}</td>
-        `;
+        
+        const dirStr = item.direction === 'kudari' ? '下り' : (item.direction === 'nobori' ? '上り' : 'ー');
+        let html = `<td><strong>${formatDateStr(item.date)}</strong></td><td>${dirStr}</td>`;
+        
+        seatArray.forEach(seat => {
+            html += `<td>${getStatusBadge(item.seats[seat])}</td>`;
+        });
+        
+        tr.innerHTML = html;
         tbody.appendChild(tr);
     });
 }
 
-function getStatusIndicator(status) {
-    if (!status) return '<span class="seat-status-indicator unavailable">-</span>';
-    
-    // 全角半角の揺れを考慮
+function getStatusBadge(status) {
+    if (!status) return `<span class="status-badge status-err">-</span>`;
     const s = status.trim();
-    if (s === '○' || s === '〇') {
-        return '<span class="seat-status-indicator available">○</span>';
-    } else if (s === '△') {
-        return '<span class="seat-status-indicator few">△</span>';
-    } else if (s === '×') {
-        return '<span class="seat-status-indicator unavailable">×</span>';
-    } else if (s === '取得エラー') {
-        return '<span class="seat-status-indicator error">!</span>';
-    } else {
-        return `<span class="seat-status-indicator unavailable" title="${status}">-</span>`;
-    }
+    if (s === '○' || s === '〇') return `<span class="status-badge status-o">〇</span>`;
+    if (s === '△') return `<span class="status-badge status-tri">△</span>`;
+    if (s === '×' || s.includes('なし')) return `<span class="status-badge status-x">×</span>`;
+    return `<span class="status-badge status-err">!</span>`;
 }
 
-function renderSeatChart(courseData) {
-    const seatCounts = {
-        'クシェット': { total: 0, available: 0 },
-        'ファーストシート': { total: 0, available: 0 },
-        'プレミアルーム1': { total: 0, available: 0 },
-        'プレミアルーム2': { total: 0, available: 0 }
-    };
+/* ---------------------------------
+   Charts
+--------------------------------- */
+function renderCharts() {
+    const courseHist = historyData.filter(d => d.course === currentCourse);
+    
+    // Seat availability aggregation
+    const seatCounts = {};
+    const dayCounts = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0 }; // Sun=0 to Sat=6
+    const dayTotals = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0 };
 
-    // 過去のすべての実行結果を巡回
-    courseData.forEach(run => {
+    courseHist.forEach(run => {
         run.results.forEach(res => {
-            const seatName = res.seat;
-            if (seatCounts[seatName]) {
-                seatCounts[seatName].total++;
-                if (res.status === '○' || res.status === '〇' || res.status === '△') {
-                    seatCounts[seatName].available++;
+            // Seat Donut Data
+            if (!seatCounts[res.seat]) {
+                seatCounts[res.seat] = { total: 0, available: 0 };
+            }
+            seatCounts[res.seat].total++;
+            
+            const isAvail = (res.status === '○' || res.status === '〇' || res.status === '△');
+            if (isAvail) seatCounts[res.seat].available++;
+
+            // Day of Week Data (target date day of week)
+            if (res.date && res.date.length === 8) {
+                const y = parseInt(res.date.substring(0, 4), 10);
+                const m = parseInt(res.date.substring(4, 6), 10) - 1;
+                const d = parseInt(res.date.substring(6, 8), 10);
+                const dayOfWeek = new Date(y, m, d).getDay();
+                
+                dayTotals[dayOfWeek]++;
+                if (isAvail) {
+                    dayCounts[dayOfWeek]++;
                 }
             }
         });
     });
 
-    const labels = Object.keys(seatCounts);
-    const dataValues = labels.map(label => {
-        const seat = seatCounts[label];
-        return seat.total > 0 ? Math.round((seat.available / seat.total) * 100) : 0;
+    // Donut Chart Setup
+    const seatLabels = Object.keys(seatCounts);
+    const seatData = seatLabels.map(label => {
+        const d = seatCounts[label];
+        return d.total > 0 ? ((d.available / d.total) * 100).toFixed(1) : 0;
     });
 
-    if (seatChart) {
-        seatChart.destroy();
-    }
-
-    const ctx = document.getElementById('seat-availability-chart').getContext('2d');
-    seatChart = new Chart(ctx, {
+    if (seatChartInstance) seatChartInstance.destroy();
+    const ctxSeat = document.getElementById('seatChart').getContext('2d');
+    seatChartInstance = new Chart(ctxSeat, {
         type: 'doughnut',
         data: {
-            labels: labels,
+            labels: seatLabels,
             datasets: [{
-                data: dataValues,
-                backgroundColor: [
-                    '#00e676', // クシェット
-                    '#0070f3', // ファーストシート
-                    '#00f5ff', // プレミアルーム1
-                    '#ffea00'  // プレミアルーム2
-                ],
-                borderWidth: 2,
-                borderColor: '#ffffff'
+                data: seatData,
+                backgroundColor: CHART_COLORS,
+                borderWidth: 0,
+                hoverOffset: 4
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            cutout: '70%',
             plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: '#64748b',
-                        font: { family: 'Inter' }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: 空席率 ${context.raw}%`;
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderTimeChart(courseData) {
-    // 2時間ごとの時間帯（6:00, 8:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00）を集計
-    // 空席が検知された回数を集計
-    const hours = ['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
-    const timeCounts = Array(hours.length).fill(0);
-
-    courseData.forEach(run => {
-        // 実行日時の「時」を取得
-        const timeObj = new Date(run.timestamp);
-        const hour = timeObj.getHours();
-
-        // 最も近い時間枠のインデックスを見つける
-        let matchIndex = -1;
-        let minDiff = 24;
-
-        hours.forEach((hStr, idx) => {
-            const hVal = parseInt(hStr.split(':')[0]);
-            const diff = Math.abs(hour - hVal);
-            if (diff < minDiff) {
-                minDiff = diff;
-                matchIndex = idx;
-            }
-        });
-
-        if (matchIndex !== -1 && minDiff <= 1) { // 1時間以内のズレのみ許容
-            // その回で空席が1つでもあったかどうか
-            let hasAvailable = false;
-            run.results.forEach(res => {
-                if (res.status === '○' || res.status === '〇' || res.status === '△') {
-                    hasAvailable = true;
-                }
-            });
-
-            if (hasAvailable) {
-                timeCounts[matchIndex]++;
+                legend: { position: 'right', labels: { usePointStyle: true, font: { family: 'Inter' } } },
+                tooltip: { callbacks: { label: (c) => ` ${c.label}: ${c.raw}%` } }
             }
         }
     });
 
-    if (timeChart) {
-        timeChart.destroy();
-    }
+    // Bar Chart Setup
+    const dayLabels = ["日", "月", "火", "水", "木", "金", "土"];
+    const dayData = [0,1,2,3,4,5,6].map(i => {
+        return dayTotals[i] > 0 ? ((dayCounts[i] / dayTotals[i]) * 100).toFixed(1) : 0;
+    });
 
-    const ctx = document.getElementById('time-availability-chart').getContext('2d');
-    timeChart = new Chart(ctx, {
+    if (dayChartInstance) dayChartInstance.destroy();
+    const ctxDay = document.getElementById('dayChart').getContext('2d');
+    dayChartInstance = new Chart(ctxDay, {
         type: 'bar',
         data: {
-            labels: hours,
+            labels: dayLabels,
             datasets: [{
-                label: '空席検知回数',
-                data: timeCounts,
-                backgroundColor: 'rgba(0, 112, 243, 0.4)',
-                borderColor: '#0070f3',
-                borderWidth: 1.5,
+                label: '空席検知率 (%)',
+                data: dayData,
+                backgroundColor: '#C55A11',
                 borderRadius: 4
             }]
         },
@@ -295,14 +277,8 @@ function renderTimeChart(courseData) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: {
-                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                    ticks: { color: '#64748b', stepSize: 1 }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#64748b' }
-                }
+                y: { beginAtZero: true, max: Math.max(...dayData) < 10 ? 10 : undefined, grid: { color: 'rgba(0,0,0,0.05)' } },
+                x: { grid: { display: false } }
             },
             plugins: {
                 legend: { display: false }
@@ -311,68 +287,118 @@ function renderTimeChart(courseData) {
     });
 }
 
-function renderTimeline(courseData) {
-    const list = document.getElementById('timeline-list');
-    list.innerHTML = '';
+/* ---------------------------------
+   Timeline
+--------------------------------- */
+function renderTimeline() {
+    const courseHist = historyData.filter(d => d.course === currentCourse);
+    const container = document.getElementById('timeline-container');
+    container.innerHTML = '';
 
-    const timelineItems = [];
-
-    // 過去のデータを走査し、空席（○ or △）のレコードを抽出
-    courseData.forEach(run => {
-        const runTime = new Date(run.timestamp);
-        
+    const events = [];
+    courseHist.forEach(run => {
+        const time = new Date(run.timestamp);
         run.results.forEach(res => {
             if (res.status === '○' || res.status === '〇' || res.status === '△') {
-                const dateObj = new Date(
-                    parseInt(res.date.substring(0, 4)),
-                    parseInt(res.date.substring(4, 6)) - 1,
-                    parseInt(res.date.substring(6, 8))
-                );
-                const dateStr = `${res.date.substring(4, 6)}/${res.date.substring(6, 8)}(${weekdayKanji[dateObj.getDay()]})`;
-                const directionStr = res.direction === 'kudari' ? '京都→新宮' : '新宮→京都';
-
-                timelineItems.push({
-                    timestamp: runTime,
-                    content: `【空席検知】 ${dateStr} ${directionStr} の <strong>${res.seat}</strong> に空き（${res.status}）を検知しました。`
+                events.push({
+                    time: time,
+                    dateStr: formatDateStr(res.date),
+                    seat: res.seat,
+                    status: res.status,
+                    dir: res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : '')
                 });
             }
         });
     });
 
-    // タイムスタンプ降順でソート
-    timelineItems.sort((a, b) => b.timestamp - a.timestamp);
+    events.sort((a, b) => b.time - a.time);
+    const topEvents = events.slice(0, 10);
 
-    // 最大15件表示
-    const displayItems = timelineItems.slice(0, 15);
-
-    if (displayItems.length === 0) {
-        list.innerHTML = '<li class="timeline-empty">過去30日以内に検知された空席はありません。</li>';
+    if (topEvents.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">最近検知された空席はありません。</p>';
         return;
     }
 
-    displayItems.forEach(item => {
-        const li = document.createElement('li');
-        li.className = 'timeline-item';
-        li.innerHTML = `
-            <span class="timeline-time">${formatDate(item.timestamp)}</span>
-            <span class="timeline-content">${item.content}</span>
+    topEvents.forEach(ev => {
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
+        item.innerHTML = `
+            <div class="timeline-marker"></div>
+            <span class="timeline-time">${formatISODate(ev.time.toISOString())}</span>
+            <div class="timeline-content">
+                <strong>${ev.dateStr} ${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
+            </div>
         `;
-        list.appendChild(li);
+        container.appendChild(item);
     });
 }
 
-function clearCharts() {
-    if (seatChart) {
-        seatChart.destroy();
-        seatChart = null;
+/* ---------------------------------
+   Logs & Pagination
+--------------------------------- */
+function renderLogs() {
+    // logData is already filtered to the course by loadData()
+    // Sort reverse chronological
+    const sortedLogs = [...logData].reverse();
+    
+    const totalItems = sortedLogs.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+    
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    const currentLogs = sortedLogs.slice(startIdx, endIdx);
+
+    const tbody = document.querySelector('#log-table tbody');
+    tbody.innerHTML = '';
+
+    if (currentLogs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">ログデータがありません</td></tr>';
+    } else {
+        currentLogs.forEach(log => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formatISODate(log.timestamp)}</td>
+                <td>${log.train}</td>
+                <td>${log.depart} → ${log.arrive}</td>
+                <td>${formatDateStr(log.target_date)}</td>
+                <td>${log.seat_type}</td>
+                <td>${getStatusBadge(log.result)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
     }
-    if (timeChart) {
-        timeChart.destroy();
-        timeChart = null;
-    }
+
+    renderPagination(totalPages);
 }
 
-function clearTimeline() {
-    const list = document.getElementById('timeline-list');
-    list.innerHTML = '<li class="timeline-empty">過去30日以内に検知された空席はありません。</li>';
+function renderPagination(totalPages) {
+    const controls = document.getElementById('pagination-controls');
+    controls.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    // Prev
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn';
+    prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => { currentPage--; renderLogs(); };
+    controls.appendChild(prevBtn);
+
+    // Info
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    info.textContent = `${currentPage} / ${totalPages} ページ`;
+    controls.appendChild(info);
+
+    // Next
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn';
+    nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => { currentPage++; renderLogs(); };
+    controls.appendChild(nextBtn);
 }

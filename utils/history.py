@@ -57,3 +57,26 @@ def update_history(course_name, results_list):
         print(f"履歴データの更新({course_name}): 成功")
     except Exception as e:
         print(f"履歴データの保存エラー: {e}")
+
+def append_access_log(course, log_entry):
+    os.makedirs("docs", exist_ok=True)
+    log_file = f"docs/log_{course}.json"
+    logs = []
+    if os.path.exists(log_file):
+        try:
+            with open(log_file, "r", encoding="utf-8") as f:
+                logs = json.load(f)
+        except Exception as e:
+            print(f"アクセスログの読み込みエラー: {e}")
+            
+    logs.append(log_entry)
+    
+    # Keep only the last 5000 records to prevent infinite growth
+    if len(logs) > 5000:
+        logs = logs[-5000:]
+        
+    try:
+        with open(log_file, "w", encoding="utf-8") as f:
+            json.dump(logs, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"アクセスログの保存エラー: {e}")
