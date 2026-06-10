@@ -1462,5 +1462,251 @@
         "status": "×"
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-11T08:28:08.402457+09:00",
+    "course": "sunrise",
+    "results": [
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "ノビノビ座席",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルデラックス(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルデラックス(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "ソロ",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングル(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングル(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "サンライズツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "サンライズツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "ノビノビ座席",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルデラックス(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルデラックス(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "ソロ",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングル(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングル(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "サンライズツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "サンライズツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "ノビノビ座席",
+        "status": "△"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルデラックス(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルデラックス(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "ソロ",
+        "status": "△"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングル(禁煙)",
+        "status": "△"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングル(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "サンライズツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "サンライズツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "ノビノビ座席",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルデラックス(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングルデラックス(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "ソロ",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングル(禁煙)",
+        "status": "△"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "シングル(喫煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "サンライズツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "date": "20260611",
+        "direction": "unknown",
+        "seat": "サンライズツイン(喫煙)",
+        "status": "×"
+      }
+    ]
   }
 ]
