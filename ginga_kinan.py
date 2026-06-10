@@ -32,7 +32,7 @@ def main():
 
     for d_str in kyoto_to_shingu:
         search_conditions.append({
-            "name": "京都→新宮",
+            "name": "紀南コース(下り)",
             "depart_name": "京都",
             "arrive_name": "新宮",
             "depart": "%8B%9E%93s",
@@ -47,7 +47,7 @@ def main():
 
     for d_str in shingu_to_kyoto:
         search_conditions.append({
-            "name": "新宮→京都",
+            "name": "紀南コース(上り)",
             "depart_name": "新宮",
             "arrive_name": "京都",
             "depart": "%90V%8B%7B",

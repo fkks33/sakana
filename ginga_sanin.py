@@ -25,7 +25,7 @@ def main():
 
     for d_str in kyoto_to_izumo:
         search_conditions.append({
-            "name": "京都→出雲市",
+            "name": "山陰コース(下り)",
             "depart_name": "京都",
             "arrive_name": "出雲市",
             "depart": "%8B%9E%93s",
@@ -40,7 +40,7 @@ def main():
 
     for d_str in izumo_to_kyoto:
         search_conditions.append({
-            "name": "出雲市→京都",
+            "name": "山陰コース(上り)",
             "depart_name": "出雲市",
             "arrive_name": "京都",
             "depart": "%8Fo%89_%8Es",

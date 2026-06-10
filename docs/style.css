@@ -221,7 +221,8 @@ body {
 .mobile-header {
     display: none;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 16px;
     padding: 16px 24px;
     background: white;
     box-shadow: var(--shadow-sm);
