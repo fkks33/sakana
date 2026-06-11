@@ -2236,5 +2236,155 @@
         "status": "情報なし"
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-12T07:51:53.907095+09:00",
+    "course": "kinan",
+    "results": [
+      {
+        "date": "20260703",
+        "direction": "kudari",
+        "seat": "クシェット",
+        "status": "×"
+      },
+      {
+        "date": "20260703",
+        "direction": "kudari",
+        "seat": "ファーストシート",
+        "status": "×"
+      },
+      {
+        "date": "20260703",
+        "direction": "kudari",
+        "seat": "プレミアルーム1",
+        "status": "×"
+      },
+      {
+        "date": "20260703",
+        "direction": "kudari",
+        "seat": "プレミアルーム2",
+        "status": "×"
+      },
+      {
+        "date": "20260706",
+        "direction": "kudari",
+        "seat": "クシェット",
+        "status": "×"
+      },
+      {
+        "date": "20260706",
+        "direction": "kudari",
+        "seat": "ファーストシート",
+        "status": "×"
+      },
+      {
+        "date": "20260706",
+        "direction": "kudari",
+        "seat": "プレミアルーム1",
+        "status": "×"
+      },
+      {
+        "date": "20260706",
+        "direction": "kudari",
+        "seat": "プレミアルーム2",
+        "status": "×"
+      },
+      {
+        "date": "20260710",
+        "direction": "kudari",
+        "seat": "クシェット",
+        "status": "×"
+      },
+      {
+        "date": "20260710",
+        "direction": "kudari",
+        "seat": "ファーストシート",
+        "status": "×"
+      },
+      {
+        "date": "20260710",
+        "direction": "kudari",
+        "seat": "プレミアルーム1",
+        "status": "×"
+      },
+      {
+        "date": "20260710",
+        "direction": "kudari",
+        "seat": "プレミアルーム2",
+        "status": "×"
+      },
+      {
+        "date": "20260705",
+        "direction": "nobori",
+        "seat": "クシェット",
+        "status": "△"
+      },
+      {
+        "date": "20260705",
+        "direction": "nobori",
+        "seat": "ファーストシート",
+        "status": "×"
+      },
+      {
+        "date": "20260705",
+        "direction": "nobori",
+        "seat": "プレミアルーム1",
+        "status": "×"
+      },
+      {
+        "date": "20260705",
+        "direction": "nobori",
+        "seat": "プレミアルーム2",
+        "status": "×"
+      },
+      {
+        "date": "20260708",
+        "direction": "nobori",
+        "seat": "クシェット",
+        "status": "×"
+      },
+      {
+        "date": "20260708",
+        "direction": "nobori",
+        "seat": "ファーストシート",
+        "status": "×"
+      },
+      {
+        "date": "20260708",
+        "direction": "nobori",
+        "seat": "プレミアルーム1",
+        "status": "×"
+      },
+      {
+        "date": "20260708",
+        "direction": "nobori",
+        "seat": "プレミアルーム2",
+        "status": "×"
+      },
+      {
+        "date": "20260712",
+        "direction": "nobori",
+        "seat": "クシェット",
+        "status": "情報なし"
+      },
+      {
+        "date": "20260712",
+        "direction": "nobori",
+        "seat": "ファーストシート",
+        "status": "情報なし"
+      },
+      {
+        "date": "20260712",
+        "direction": "nobori",
+        "seat": "プレミアルーム1",
+        "status": "情報なし"
+      },
+      {
+        "date": "20260712",
+        "direction": "nobori",
+        "seat": "プレミアルーム2",
+        "status": "情報なし"
+      }
+    ]
   }
 ]
