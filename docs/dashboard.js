@@ -5,9 +5,14 @@ let logData = [];
 let seatChartInstance = null;
 let dayChartInstance = null;
 
-// Pagination state
 let currentPage = 1;
 const itemsPerPage = 20;
+
+let currentStatusItems = [];
+let statusLimit = 5;
+
+let currentLogItems = [];
+let logLimit = 5;
 
 // Consts
 const courseNames = {
@@ -132,6 +137,9 @@ function renderStatusTable() {
     tbody.innerHTML = '';
     theadTr.innerHTML = '';
 
+    const moreBtn = document.getElementById('status-more-btn');
+    if (moreBtn) moreBtn.style.display = 'none';
+
     if (courseHist.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">最近のデータがありません</td></tr>';
         return;
@@ -142,8 +150,27 @@ function renderStatusTable() {
     // Header
     theadTr.innerHTML = '<th>列車名</th><th>対象日</th><th>区間</th><th>席種</th><th>状況</th>';
 
+    currentStatusItems = lastRun.results;
+    statusLimit = 5;
+    
+    updateStatusDisplay();
+}
+
+function updateStatusDisplay() {
+    const tbody = document.querySelector('#status-table tbody');
+    const moreBtn = document.getElementById('status-more-btn');
+    tbody.innerHTML = '';
+    
+    const topItems = currentStatusItems.slice(0, statusLimit);
+
+    if (topItems.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">最近のデータがありません</td></tr>';
+        if (moreBtn) moreBtn.style.display = 'none';
+        return;
+    }
+
     // Body
-    lastRun.results.forEach(res => {
+    topItems.forEach(res => {
         const tr = document.createElement('tr');
         const trainName = res.train || courseNames[currentCourse];
         let dirStr = res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : 'ー');
@@ -160,6 +187,21 @@ function renderStatusTable() {
         `;
         tbody.appendChild(tr);
     });
+
+    if (moreBtn) {
+        if (currentStatusItems.length > statusLimit) {
+            moreBtn.style.display = 'inline-block';
+            moreBtn.onclick = () => {
+                statusLimit = Math.min(statusLimit + 15, 20);
+                updateStatusDisplay();
+                if (statusLimit >= 20 || statusLimit >= currentStatusItems.length) {
+                    moreBtn.style.display = 'none';
+                }
+            };
+        } else {
+            moreBtn.style.display = 'none';
+        }
+    }
 }
 
 function getStatusBadge(status) {
@@ -357,27 +399,23 @@ function updateTimelineDisplay() {
    Logs & Pagination
 --------------------------------- */
 function renderLogs() {
-    // logData is already filtered to the course by loadData()
-    // Sort reverse chronological
-    const sortedLogs = [...logData].reverse();
-    
-    const totalItems = sortedLogs.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-    
-    if (currentPage > totalPages) currentPage = totalPages;
-    if (currentPage < 1) currentPage = 1;
+    currentLogItems = [...logData].reverse();
+    logLimit = 5;
+    updateLogDisplay();
+}
 
-    const startIdx = (currentPage - 1) * itemsPerPage;
-    const endIdx = startIdx + itemsPerPage;
-    const currentLogs = sortedLogs.slice(startIdx, endIdx);
-
+function updateLogDisplay() {
     const tbody = document.querySelector('#log-table tbody');
+    const moreBtn = document.getElementById('log-more-btn');
     tbody.innerHTML = '';
 
-    if (currentLogs.length === 0) {
+    const topLogs = currentLogItems.slice(0, logLimit);
+
+    if (topLogs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">ログデータがありません</td></tr>';
+        if (moreBtn) moreBtn.style.display = 'none';
     } else {
-        currentLogs.forEach(log => {
+        topLogs.forEach(log => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${formatISODate(log.timestamp)}</td>
@@ -391,34 +429,18 @@ function renderLogs() {
         });
     }
 
-    renderPagination(totalPages);
-}
-
-function renderPagination(totalPages) {
-    const controls = document.getElementById('pagination-controls');
-    controls.innerHTML = '';
-
-    if (totalPages <= 1) return;
-
-    // Prev
-    const prevBtn = document.createElement('button');
-    prevBtn.className = 'page-btn';
-    prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
-    prevBtn.disabled = currentPage === 1;
-    prevBtn.onclick = () => { currentPage--; renderLogs(); };
-    controls.appendChild(prevBtn);
-
-    // Info
-    const info = document.createElement('span');
-    info.className = 'page-info';
-    info.textContent = `${currentPage} / ${totalPages} ページ`;
-    controls.appendChild(info);
-
-    // Next
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'page-btn';
-    nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-    nextBtn.disabled = currentPage === totalPages;
-    nextBtn.onclick = () => { currentPage++; renderLogs(); };
-    controls.appendChild(nextBtn);
+    if (moreBtn) {
+        if (currentLogItems.length > logLimit) {
+            moreBtn.style.display = 'inline-block';
+            moreBtn.onclick = () => {
+                logLimit = Math.min(logLimit + 15, 20);
+                updateLogDisplay();
+                if (logLimit >= 20 || logLimit >= currentLogItems.length) {
+                    moreBtn.style.display = 'none';
+                }
+            };
+        } else {
+            moreBtn.style.display = 'none';
+        }
+    }
 }
