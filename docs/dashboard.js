@@ -133,46 +133,31 @@ function renderStatusTable() {
     theadTr.innerHTML = '';
 
     if (courseHist.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">最近のデータがありません</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">最近のデータがありません</td></tr>';
         return;
     }
 
     const lastRun = courseHist[courseHist.length - 1];
-    const grouped = {};
-    const seatTypes = new Set();
-
-    lastRun.results.forEach(res => {
-        const key = `${res.date}_${res.direction}`;
-        if (!grouped[key]) {
-            grouped[key] = { date: res.date, direction: res.direction, seats: {} };
-        }
-        grouped[key].seats[res.seat] = res.status;
-        seatTypes.add(res.seat);
-    });
-
-    const seatArray = Array.from(seatTypes);
 
     // Header
-    let headHtml = '<th>対象日</th><th>方向</th>';
-    seatArray.forEach(seat => {
-        headHtml += `<th>${seat}</th>`;
-    });
-    theadTr.innerHTML = headHtml;
+    theadTr.innerHTML = '<th>列車名</th><th>対象日</th><th>区間</th><th>席種</th><th>状況</th>';
 
     // Body
-    const sortedKeys = Object.keys(grouped).sort();
-    sortedKeys.forEach(key => {
-        const item = grouped[key];
+    lastRun.results.forEach(res => {
         const tr = document.createElement('tr');
+        const trainName = res.train || courseNames[currentCourse];
+        let dirStr = res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : 'ー');
+        if (res.depart && res.arrive) {
+            dirStr = `${res.depart} → ${res.arrive}`;
+        }
         
-        const dirStr = item.direction === 'kudari' ? '下り' : (item.direction === 'nobori' ? '上り' : 'ー');
-        let html = `<td><strong>${formatDateStr(item.date)}</strong></td><td>${dirStr}</td>`;
-        
-        seatArray.forEach(seat => {
-            html += `<td>${getStatusBadge(item.seats[seat])}</td>`;
-        });
-        
-        tr.innerHTML = html;
+        tr.innerHTML = `
+            <td>${trainName}</td>
+            <td><strong>${formatDateStr(res.date)}</strong></td>
+            <td>${dirStr}</td>
+            <td>${res.seat}</td>
+            <td>${getStatusBadge(res.status)}</td>
+        `;
         tbody.appendChild(tr);
     });
 }
@@ -290,47 +275,82 @@ function renderCharts() {
 /* ---------------------------------
    Timeline
 --------------------------------- */
+let currentTimelineEvents = [];
+let timelineLimit = 5;
+
 function renderTimeline() {
     const courseHist = historyData.filter(d => d.course === currentCourse);
-    const container = document.getElementById('timeline-container');
-    container.innerHTML = '';
-
+    
     const events = [];
     courseHist.forEach(run => {
         const time = new Date(run.timestamp);
         run.results.forEach(res => {
             if (res.status === '○' || res.status === '〇' || res.status === '△') {
+                let dirStr = res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : '');
+                if (res.depart && res.arrive) {
+                    dirStr = `${res.depart} → ${res.arrive}`;
+                }
+                let trainName = res.train || '';
                 events.push({
                     time: time,
                     dateStr: formatDateStr(res.date),
                     seat: res.seat,
                     status: res.status,
-                    dir: res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : '')
+                    dir: dirStr,
+                    train: trainName
                 });
             }
         });
     });
 
     events.sort((a, b) => b.time - a.time);
-    const topEvents = events.slice(0, 10);
+    currentTimelineEvents = events;
+    timelineLimit = 5;
+    
+    updateTimelineDisplay();
+}
+
+function updateTimelineDisplay() {
+    const container = document.getElementById('timeline-container');
+    const moreBtn = document.getElementById('timeline-more-btn');
+    container.innerHTML = '';
+
+    const topEvents = currentTimelineEvents.slice(0, timelineLimit);
 
     if (topEvents.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">最近検知された空席はありません。</p>';
+        if (moreBtn) moreBtn.style.display = 'none';
         return;
     }
 
     topEvents.forEach(ev => {
         const item = document.createElement('div');
         item.className = 'timeline-item';
+        let trainStr = ev.train ? `${ev.train} ` : '';
         item.innerHTML = `
             <div class="timeline-marker"></div>
             <span class="timeline-time">${formatISODate(ev.time.toISOString())}</span>
             <div class="timeline-content">
-                <strong>${ev.dateStr} ${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
+                <strong>${ev.dateStr} ${trainStr}${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
             </div>
         `;
         container.appendChild(item);
     });
+
+    if (moreBtn) {
+        if (currentTimelineEvents.length > timelineLimit) {
+            moreBtn.style.display = 'inline-block';
+            moreBtn.onclick = () => {
+                timelineLimit = Math.min(timelineLimit + 15, 20);
+                updateTimelineDisplay();
+                if (timelineLimit >= 20 || timelineLimit >= currentTimelineEvents.length) {
+                    moreBtn.style.display = 'none';
+                }
+            };
+        } else {
+            moreBtn.style.display = 'none';
+        }
+    }
 }
 
 /* ---------------------------------

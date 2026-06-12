@@ -71,9 +71,9 @@ def append_access_log(course, log_entry):
             
     logs.append(log_entry)
     
-    # Keep only the last 5000 records to prevent infinite growth
-    if len(logs) > 5000:
-        logs = logs[-5000:]
+    # Keep only the last 1000 records to prevent infinite growth
+    if len(logs) > 1000:
+        logs = logs[-1000:]
         
     try:
         with open(log_file, "w", encoding="utf-8") as f:

@@ -97,6 +97,9 @@ def run_availability_check(course_name, display_name, target_dates_str, search_c
 
                     # Append to history
                     history_results.append({
+                        "train": condition.get("name", display_name),
+                        "depart": depart_name,
+                        "arrive": arrive_name,
                         "date": condition["date"],
                         "direction": condition.get("direction", "unknown"),
                         "seat": seat_name,
