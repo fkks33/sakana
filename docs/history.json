@@ -3514,5 +3514,371 @@
         "status": "×"
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-13T08:21:12.246750+09:00",
+    "course": "sunrise",
+    "results": [
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "ノビノビ座席",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルデラックス(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルデラックス(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "ソロ",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングル(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングル(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "サンライズツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (東京→高松)",
+        "depart": "東京",
+        "arrive": "高松",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "サンライズツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "ノビノビ座席",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルデラックス(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルデラックス(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "ソロ",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングル(禁煙)",
+        "status": "△"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングル(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "サンライズツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (東京→出雲市)",
+        "depart": "東京",
+        "arrive": "出雲市",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "サンライズツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "ノビノビ座席",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルデラックス(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルデラックス(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "ソロ",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングル(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングル(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "サンライズツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ瀬戸 (高松→東京)",
+        "depart": "高松",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "サンライズツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "ノビノビ座席",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルツイン(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルデラックス(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングルデラックス(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "ソロ",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングル(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "シングル(喫煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "サンライズツイン(禁煙)",
+        "status": "×"
+      },
+      {
+        "train": "サンライズ出雲 (出雲市→東京)",
+        "depart": "出雲市",
+        "arrive": "東京",
+        "date": "20260613",
+        "direction": "unknown",
+        "seat": "サンライズツイン(喫煙)",
+        "status": "×"
+      }
+    ]
   }
 ]
