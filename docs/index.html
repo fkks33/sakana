@@ -80,9 +80,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div style="text-align: center; margin-top: 10px;">
-                    <button id="status-more-btn" class="page-btn" style="display: none; width: 100%;">もっと見る</button>
-                </div>
             </div>
 
             <!-- 空席出現率 (席種別) -->
@@ -113,15 +110,12 @@
                 <div class="timeline" id="timeline-container">
                     <!-- JSで動的生成 -->
                 </div>
-                <div style="text-align: center; margin-top: 10px;">
-                    <button id="timeline-more-btn" class="page-btn" style="display: none; width: 100%;">もっと見る</button>
-                </div>
             </div>
 
             <!-- 詳細ログ (ページネーション) -->
             <div class="card col-12">
                 <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-database"></i> アクセスログ (直近1000件)</div>
+                    <div class="card-title"><i class="fa-solid fa-database"></i> アクセスログ</div>
                 </div>
                 <div class="table-container">
                     <table id="log-table">
@@ -141,8 +135,9 @@
                     </table>
                 </div>
                 
-                <div style="text-align: center; margin-top: 10px;">
-                    <button id="log-more-btn" class="page-btn" style="display: none; width: 100%;">もっと見る</button>
+                <!-- Pagination -->
+                <div class="pagination" id="pagination-controls">
+                    <!-- JSで動的生成 -->
                 </div>
             </div>
 

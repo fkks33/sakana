@@ -5,14 +5,9 @@ let logData = [];
 let seatChartInstance = null;
 let dayChartInstance = null;
 
-let currentPage = 1;
-const itemsPerPage = 20;
-
-let currentStatusItems = [];
-let statusLimit = 5;
-
-let currentLogItems = [];
-let logLimit = 5;
+// Pagination state
+let timelineExpanded = false;
+let logsExpanded = false;
 
 // Consts
 const courseNames = {
@@ -42,7 +37,8 @@ function setupSidebar() {
             e.currentTarget.classList.add('active');
             currentCourse = e.currentTarget.dataset.course;
             displayTitle.textContent = courseNames[currentCourse];
-            currentPage = 1;
+            timelineExpanded = false;
+            logsExpanded = false;
             
             // Close mobile menu
             sidebar.classList.remove('open');
@@ -130,78 +126,56 @@ function updateLastUpdated() {
    Status Table
 --------------------------------- */
 function renderStatusTable() {
-    const courseHist = historyData.filter(d => d.course === currentCourse);
     const tbody = document.querySelector('#status-table tbody');
     const theadTr = document.getElementById('status-table-header');
     
     tbody.innerHTML = '';
     theadTr.innerHTML = '';
 
-    const moreBtn = document.getElementById('status-more-btn');
-    if (moreBtn) moreBtn.style.display = 'none';
-
-    if (courseHist.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">最近のデータがありません</td></tr>';
+    if (logData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">最近のデータがありません</td></tr>';
         return;
     }
 
-    const lastRun = courseHist[courseHist.length - 1];
+    const latestTimestamp = logData[logData.length - 1].timestamp;
+    const latestLogs = logData.filter(log => log.timestamp === latestTimestamp);
 
-    // Header
-    theadTr.innerHTML = '<th>列車名</th><th>対象日</th><th>区間</th><th>席種</th><th>状況</th>';
+    const grouped = {};
+    const seatTypes = new Set();
 
-    currentStatusItems = lastRun.results;
-    statusLimit = 5;
-    
-    updateStatusDisplay();
-}
-
-function updateStatusDisplay() {
-    const tbody = document.querySelector('#status-table tbody');
-    const moreBtn = document.getElementById('status-more-btn');
-    tbody.innerHTML = '';
-    
-    const topItems = currentStatusItems.slice(0, statusLimit);
-
-    if (topItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">最近のデータがありません</td></tr>';
-        if (moreBtn) moreBtn.style.display = 'none';
-        return;
-    }
-
-    // Body
-    topItems.forEach(res => {
-        const tr = document.createElement('tr');
-        const trainName = res.train || courseNames[currentCourse];
-        let dirStr = res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : 'ー');
-        if (res.depart && res.arrive) {
-            dirStr = `${res.depart} → ${res.arrive}`;
+    latestLogs.forEach(log => {
+        const key = `${log.train}_${log.target_date}_${log.depart}_${log.arrive}`;
+        if (!grouped[key]) {
+            grouped[key] = { train: log.train, date: log.target_date, depart: log.depart, arrive: log.arrive, seats: {} };
         }
-        
-        tr.innerHTML = `
-            <td>${trainName}</td>
-            <td><strong>${formatDateStr(res.date)}</strong></td>
-            <td>${dirStr}</td>
-            <td>${res.seat}</td>
-            <td>${getStatusBadge(res.status)}</td>
-        `;
-        tbody.appendChild(tr);
+        grouped[key].seats[log.seat_type] = log.result;
+        seatTypes.add(log.seat_type);
     });
 
-    if (moreBtn) {
-        if (currentStatusItems.length > statusLimit) {
-            moreBtn.style.display = 'inline-block';
-            moreBtn.onclick = () => {
-                statusLimit = Math.min(statusLimit + 15, 20);
-                updateStatusDisplay();
-                if (statusLimit >= 20 || statusLimit >= currentStatusItems.length) {
-                    moreBtn.style.display = 'none';
-                }
-            };
-        } else {
-            moreBtn.style.display = 'none';
-        }
-    }
+    const seatArray = Array.from(seatTypes);
+
+    // Header
+    let headHtml = '<th>列車名</th><th>対象日</th><th>区間</th>';
+    seatArray.forEach(seat => {
+        headHtml += `<th>${seat}</th>`;
+    });
+    theadTr.innerHTML = headHtml;
+
+    // Body
+    const sortedKeys = Object.keys(grouped).sort();
+    sortedKeys.forEach(key => {
+        const item = grouped[key];
+        const tr = document.createElement('tr');
+        
+        let html = `<td>${item.train}</td><td><strong>${formatDateStr(item.date)}</strong></td><td>${item.depart} → ${item.arrive}</td>`;
+        
+        seatArray.forEach(seat => {
+            html += `<td>${getStatusBadge(item.seats[seat])}</td>`;
+        });
+        
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    });
 }
 
 function getStatusBadge(status) {
@@ -317,81 +291,61 @@ function renderCharts() {
 /* ---------------------------------
    Timeline
 --------------------------------- */
-let currentTimelineEvents = [];
-let timelineLimit = 5;
-
 function renderTimeline() {
     const courseHist = historyData.filter(d => d.course === currentCourse);
-    
+    const container = document.getElementById('timeline-container');
+    container.innerHTML = '';
+
     const events = [];
     courseHist.forEach(run => {
         const time = new Date(run.timestamp);
         run.results.forEach(res => {
             if (res.status === '○' || res.status === '〇' || res.status === '△') {
-                let dirStr = res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : '');
-                if (res.depart && res.arrive) {
-                    dirStr = `${res.depart} → ${res.arrive}`;
-                }
-                let trainName = res.train || '';
                 events.push({
                     time: time,
                     dateStr: formatDateStr(res.date),
                     seat: res.seat,
                     status: res.status,
-                    dir: dirStr,
-                    train: trainName
+                    dir: res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : '')
                 });
             }
         });
     });
 
     events.sort((a, b) => b.time - a.time);
-    currentTimelineEvents = events;
-    timelineLimit = 5;
-    
-    updateTimelineDisplay();
-}
-
-function updateTimelineDisplay() {
-    const container = document.getElementById('timeline-container');
-    const moreBtn = document.getElementById('timeline-more-btn');
-    container.innerHTML = '';
-
-    const topEvents = currentTimelineEvents.slice(0, timelineLimit);
+    const limit = timelineExpanded ? 20 : 5;
+    const topEvents = events.slice(0, limit);
 
     if (topEvents.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">最近検知された空席はありません。</p>';
-        if (moreBtn) moreBtn.style.display = 'none';
         return;
     }
 
     topEvents.forEach(ev => {
         const item = document.createElement('div');
         item.className = 'timeline-item';
-        let trainStr = ev.train ? `${ev.train} ` : '';
         item.innerHTML = `
             <div class="timeline-marker"></div>
             <span class="timeline-time">${formatISODate(ev.time.toISOString())}</span>
             <div class="timeline-content">
-                <strong>${ev.dateStr} ${trainStr}${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
+                <strong>${ev.dateStr} ${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
             </div>
         `;
         container.appendChild(item);
     });
 
-    if (moreBtn) {
-        if (currentTimelineEvents.length > timelineLimit) {
-            moreBtn.style.display = 'inline-block';
-            moreBtn.onclick = () => {
-                timelineLimit = Math.min(timelineLimit + 15, 20);
-                updateTimelineDisplay();
-                if (timelineLimit >= 20 || timelineLimit >= currentTimelineEvents.length) {
-                    moreBtn.style.display = 'none';
-                }
-            };
-        } else {
-            moreBtn.style.display = 'none';
-        }
+    if (!timelineExpanded && events.length > 5) {
+        const btnContainer = document.createElement('div');
+        btnContainer.style.textAlign = 'center';
+        btnContainer.style.marginTop = '15px';
+        const btn = document.createElement('button');
+        btn.textContent = 'もっと見る';
+        btn.className = 'tab-btn';
+        btn.style.padding = '5px 15px';
+        btn.style.fontSize = '12px';
+        btn.onclick = () => { timelineExpanded = true; renderTimeline(); };
+        btnContainer.appendChild(btn);
+        container.appendChild(btnContainer);
     }
 }
 
@@ -399,23 +353,20 @@ function updateTimelineDisplay() {
    Logs & Pagination
 --------------------------------- */
 function renderLogs() {
-    currentLogItems = [...logData].reverse();
-    logLimit = 5;
-    updateLogDisplay();
-}
+    // logData is already filtered to the course by loadData()
+    // Sort reverse chronological
+    const sortedLogs = [...logData].reverse();
+    
+    const limit = logsExpanded ? 20 : 5;
+    const currentLogs = sortedLogs.slice(0, limit);
 
-function updateLogDisplay() {
     const tbody = document.querySelector('#log-table tbody');
-    const moreBtn = document.getElementById('log-more-btn');
     tbody.innerHTML = '';
 
-    const topLogs = currentLogItems.slice(0, logLimit);
-
-    if (topLogs.length === 0) {
+    if (currentLogs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">ログデータがありません</td></tr>';
-        if (moreBtn) moreBtn.style.display = 'none';
     } else {
-        topLogs.forEach(log => {
+        currentLogs.forEach(log => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${formatISODate(log.timestamp)}</td>
@@ -429,18 +380,19 @@ function updateLogDisplay() {
         });
     }
 
-    if (moreBtn) {
-        if (currentLogItems.length > logLimit) {
-            moreBtn.style.display = 'inline-block';
-            moreBtn.onclick = () => {
-                logLimit = Math.min(logLimit + 15, 20);
-                updateLogDisplay();
-                if (logLimit >= 20 || logLimit >= currentLogItems.length) {
-                    moreBtn.style.display = 'none';
-                }
-            };
-        } else {
-            moreBtn.style.display = 'none';
-        }
+    const controls = document.getElementById('pagination-controls');
+    controls.innerHTML = '';
+    controls.style.display = 'flex';
+    controls.style.justifyContent = 'center';
+    controls.style.marginTop = '15px';
+
+    if (!logsExpanded && sortedLogs.length > 5) {
+        const btn = document.createElement('button');
+        btn.textContent = 'もっと見る';
+        btn.className = 'tab-btn';
+        btn.style.padding = '5px 15px';
+        btn.style.fontSize = '12px';
+        btn.onclick = () => { logsExpanded = true; renderLogs(); };
+        controls.appendChild(btn);
     }
 }
