@@ -529,3 +529,53 @@ tr:hover td {
     display: block;
     opacity: 1;
 }
+
+/* ------------------
+   Button Styles
+   ------------------ */
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+    font-size: 14px;
+}
+.btn-outline:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* ------------------
+   Accordion Logs
+   ------------------ */
+.log-group-header {
+    cursor: pointer;
+    transition: var(--transition);
+}
+.log-group-header:hover td {
+    background-color: var(--primary-light) !important;
+}
+.log-group-header td i.fa-chevron-down {
+    transition: transform 0.3s ease;
+}
+.log-group-header.open td i.fa-chevron-down {
+    transform: rotate(180deg);
+}
+.log-group-details {
+    background-color: #FAFAFA;
+}
+.log-group-details table {
+    margin: 10px 0;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+.log-group-details th, .log-group-details td {
+    padding: 8px 12px;
+    font-size: 13px;
+}

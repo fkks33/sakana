@@ -2,7 +2,7 @@ import time
 from playwright.sync_api import sync_playwright
 
 from utils.line_api import send_line_message
-from utils.history import load_state, save_state, update_history, append_access_log
+from utils.history import load_state, save_state, append_access_logs
 from utils.date_utils import get_jst_now
 from utils.scraper import fetch_seat_statuses
 from datetime import datetime
@@ -21,7 +21,7 @@ def run_availability_check(course_name, display_name, target_dates_str, search_c
 
     state = load_state()
     new_state = {}
-    history_results = []
+    logs_list = []
     
     available_seats_lines = []
     has_available_seat = False
@@ -90,21 +90,11 @@ def run_availability_check(course_name, display_name, target_dates_str, search_c
                         "depart": depart_name,
                         "arrive": arrive_name,
                         "target_date": condition["date"],
+                        "direction": condition.get("direction", "unknown"),
                         "seat_type": seat_name,
                         "result": seat_status
                     }
-                    append_access_log(course_name, log_entry)
-
-                    # Append to history
-                    history_results.append({
-                        "train": condition.get("name", display_name),
-                        "depart": depart_name,
-                        "arrive": arrive_name,
-                        "date": condition["date"],
-                        "direction": condition.get("direction", "unknown"),
-                        "seat": seat_name,
-                        "status": seat_status
-                    })
+                    logs_list.append(log_entry)
 
                     # Notification logic (last_state)
                     state_key = f"{course_name}_{condition['date']}_{condition.get('name', 'train')}_{seat_name}"
@@ -146,8 +136,8 @@ def run_availability_check(course_name, display_name, target_dates_str, search_c
     merged_state = {**state, **new_state}
     save_state(merged_state)
     
-    # Update history
-    update_history(course_name, history_results)
+    # Append bulk logs
+    append_access_logs(course_name, logs_list)
 
     if has_available_seat:
         msg_lines = [

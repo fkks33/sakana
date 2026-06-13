@@ -20,12 +20,6 @@ def main():
     single_seats = {"シングル(禁煙)": "4110041", "シングル(喫煙)": "4120041"}
     suntwin_seats = {"サンライズツイン(禁煙)": "4110062", "サンライズツイン(喫煙)": "4120062"}
 
-    seat_order = [
-        "ノビノビ座席", "ソロ", "シングル(禁煙)", "シングル(喫煙)",
-        "シングルツイン(禁煙)", "シングルツイン(喫煙)", "サンライズツイン(禁煙)",
-        "サンライズツイン(喫煙)", "シングルデラックス(禁煙)", "シングルデラックス(喫煙)"
-    ]
-
     seto_groups = [
         {"param": "%BB%BE%C4%20%20000", "seats": base_seats},
         {"param": "%BB%BE%C4%BF%20000", "seats": solo_seats},
@@ -55,17 +49,10 @@ def main():
         for route in routes:
             # Flatten the groups into a single seat_configs for the runner
             seat_configs = {}
-            # Ensure order by recreating dictionary in the specified order later
-            temp_configs = {}
             for group in route["groups"]:
                 param = group["param"]
                 for seat_name, data_id in group["seats"].items():
-                    temp_configs[seat_name] = {"param": param, "data_id": data_id}
-            
-            # Apply ordering
-            for seat_name in seat_order:
-                if seat_name in temp_configs:
-                    seat_configs[seat_name] = temp_configs[seat_name]
+                    seat_configs[seat_name] = {"param": param, "data_id": data_id}
 
             search_conditions.append({
                 "name": route["name"],

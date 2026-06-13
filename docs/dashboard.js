@@ -1,6 +1,6 @@
 // Sakana Dashboard Script - Vanilla JS
 let currentCourse = 'kinan';
-let historyData = [];
+// let historyData = []; (removed)
 let logData = [];
 let seatChartInstance = null;
 let dayChartInstance = null;
@@ -19,10 +19,19 @@ const weekdayKanji = ["日", "月", "火", "水", "木", "金", "土"];
 const CHART_COLORS = ['#C55A11', '#E2A03F', '#F6C879', '#F9E0B7', '#2D3748', '#718096', '#CBD5E0', '#E2E8F0', '#EDF2F7', '#F7FAFC'];
 
 // Init
+let autoRefreshTimer = null;
 document.addEventListener('DOMContentLoaded', () => {
     setupSidebar();
     loadData();
+    startAutoRefresh();
 });
+
+function startAutoRefresh() {
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = setInterval(() => {
+        loadData();
+    }, 300000); // 5 minutes
+}
 
 function setupSidebar() {
     const tabs = document.querySelectorAll('.tab-btn');
@@ -61,13 +70,7 @@ function setupSidebar() {
 
 async function loadData() {
     try {
-        // Load history.json (for status, charts, timeline)
-        const histRes = await fetch('history.json');
-        if (histRes.ok) {
-            historyData = await histRes.json();
-        } else {
-            historyData = [];
-        }
+        // history.json is merged into logData
 
         // Load log_{course}.json
         const logRes = await fetch(`log_${currentCourse}.json`);
@@ -191,37 +194,33 @@ function getStatusBadge(status) {
    Charts
 --------------------------------- */
 function renderCharts() {
-    const courseHist = historyData.filter(d => d.course === currentCourse);
-    
     // Seat availability aggregation
     const seatCounts = {};
     const dayCounts = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0 }; // Sun=0 to Sat=6
     const dayTotals = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0 };
 
-    courseHist.forEach(run => {
-        run.results.forEach(res => {
-            // Seat Donut Data
-            if (!seatCounts[res.seat]) {
-                seatCounts[res.seat] = { total: 0, available: 0 };
-            }
-            seatCounts[res.seat].total++;
-            
-            const isAvail = (res.status === '○' || res.status === '〇' || res.status === '△');
-            if (isAvail) seatCounts[res.seat].available++;
+    logData.forEach(res => {
+        // Seat Donut Data
+        if (!seatCounts[res.seat_type]) {
+            seatCounts[res.seat_type] = { total: 0, available: 0 };
+        }
+        seatCounts[res.seat_type].total++;
+        
+        const isAvail = (res.result === '○' || res.result === '〇' || res.result === '△');
+        if (isAvail) seatCounts[res.seat_type].available++;
 
-            // Day of Week Data (target date day of week)
-            if (res.date && res.date.length === 8) {
-                const y = parseInt(res.date.substring(0, 4), 10);
-                const m = parseInt(res.date.substring(4, 6), 10) - 1;
-                const d = parseInt(res.date.substring(6, 8), 10);
-                const dayOfWeek = new Date(y, m, d).getDay();
-                
-                dayTotals[dayOfWeek]++;
-                if (isAvail) {
-                    dayCounts[dayOfWeek]++;
-                }
+        // Day of Week Data (target date day of week)
+        if (res.target_date && res.target_date.length === 8) {
+            const y = parseInt(res.target_date.substring(0, 4), 10);
+            const m = parseInt(res.target_date.substring(4, 6), 10) - 1;
+            const d = parseInt(res.target_date.substring(6, 8), 10);
+            const dayOfWeek = new Date(y, m, d).getDay();
+            
+            dayTotals[dayOfWeek]++;
+            if (isAvail) {
+                dayCounts[dayOfWeek]++;
             }
-        });
+        }
     });
 
     // Donut Chart Setup
@@ -292,24 +291,20 @@ function renderCharts() {
    Timeline
 --------------------------------- */
 function renderTimeline() {
-    const courseHist = historyData.filter(d => d.course === currentCourse);
     const container = document.getElementById('timeline-container');
     container.innerHTML = '';
 
     const events = [];
-    courseHist.forEach(run => {
-        const time = new Date(run.timestamp);
-        run.results.forEach(res => {
-            if (res.status === '○' || res.status === '〇' || res.status === '△') {
-                events.push({
-                    time: time,
-                    dateStr: formatDateStr(res.date),
-                    seat: res.seat,
-                    status: res.status,
-                    dir: res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : '')
-                });
-            }
-        });
+    logData.forEach(res => {
+        if (res.result === '○' || res.result === '〇' || res.result === '△') {
+            events.push({
+                time: new Date(res.timestamp),
+                dateStr: formatDateStr(res.target_date),
+                seat: res.seat_type,
+                status: res.result,
+                dir: res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : '')
+            });
+        }
     });
 
     events.sort((a, b) => b.time - a.time);
@@ -340,9 +335,7 @@ function renderTimeline() {
         btnContainer.style.marginTop = '15px';
         const btn = document.createElement('button');
         btn.textContent = 'もっと見る';
-        btn.className = 'tab-btn';
-        btn.style.padding = '5px 15px';
-        btn.style.fontSize = '12px';
+        btn.className = 'btn-outline';
         btn.onclick = () => { timelineExpanded = true; renderTimeline(); };
         btnContainer.appendChild(btn);
         container.appendChild(btnContainer);
@@ -353,32 +346,72 @@ function renderTimeline() {
    Logs & Pagination
 --------------------------------- */
 function renderLogs() {
-    // logData is already filtered to the course by loadData()
-    // Sort reverse chronological
-    const sortedLogs = [...logData].reverse();
-    
-    const limit = logsExpanded ? 20 : 5;
-    const currentLogs = sortedLogs.slice(0, limit);
-
     const tbody = document.querySelector('#log-table tbody');
     tbody.innerHTML = '';
 
-    if (currentLogs.length === 0) {
+    if (logData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">ログデータがありません</td></tr>';
-    } else {
-        currentLogs.forEach(log => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${formatISODate(log.timestamp)}</td>
-                <td>${log.train}</td>
-                <td>${log.depart} → ${log.arrive}</td>
-                <td>${formatDateStr(log.target_date)}</td>
-                <td>${log.seat_type}</td>
-                <td>${getStatusBadge(log.result)}</td>
-            `;
-            tbody.appendChild(tr);
-        });
+        document.getElementById('pagination-controls').innerHTML = '';
+        return;
     }
+
+    const groups = {};
+    const sortedLogs = [...logData].reverse();
+    const groupOrder = [];
+
+    sortedLogs.forEach(log => {
+        if (!groups[log.timestamp]) {
+            groups[log.timestamp] = [];
+            groupOrder.push(log.timestamp);
+        }
+        groups[log.timestamp].push(log);
+    });
+
+    const limit = logsExpanded ? 20 : 5;
+    const currentGroupKeys = groupOrder.slice(0, limit);
+
+    currentGroupKeys.forEach((ts) => {
+        const logsInGroup = groups[ts];
+        const trainName = logsInGroup[0].train;
+        const totalQueries = logsInGroup.length;
+        const availableCount = logsInGroup.filter(l => l.result === '○' || l.result === '〇' || l.result === '△').length;
+        
+        const headerTr = document.createElement('tr');
+        headerTr.className = 'log-group-header';
+        headerTr.innerHTML = `
+            <td><strong>${formatISODate(ts)}</strong></td>
+            <td>${trainName}</td>
+            <td colspan="3">照会数: ${totalQueries}件 / 空席検知: <strong style="color:var(--primary)">${availableCount}件</strong></td>
+            <td style="text-align: right;"><i class="fa-solid fa-chevron-down"></i></td>
+        `;
+        
+        const detailsTr = document.createElement('tr');
+        detailsTr.className = 'log-group-details';
+        detailsTr.style.display = 'none';
+        
+        let detailsHtml = '<td colspan="6" style="padding:0; border:none;"><table style="margin: 0; box-shadow: none;"><tbody>';
+        logsInGroup.forEach(log => {
+            detailsHtml += `
+                <tr>
+                    <td style="width: 25%; padding-left: 24px;">${log.depart} → ${log.arrive}</td>
+                    <td style="width: 25%;">${formatDateStr(log.target_date)}</td>
+                    <td style="width: 25%;">${log.seat_type}</td>
+                    <td style="width: 25%;">${getStatusBadge(log.result)}</td>
+                </tr>
+            `;
+        });
+        detailsHtml += '</tbody></table></td>';
+        detailsTr.innerHTML = detailsHtml;
+
+        headerTr.onclick = () => {
+            const isHidden = detailsTr.style.display === 'none';
+            detailsTr.style.display = isHidden ? 'table-row' : 'none';
+            headerTr.classList.toggle('open', isHidden);
+        };
+
+        tbody.appendChild(headerTr);
+        tbody.appendChild(detailsTr);
+    });
 
     const controls = document.getElementById('pagination-controls');
     controls.innerHTML = '';
@@ -386,12 +419,10 @@ function renderLogs() {
     controls.style.justifyContent = 'center';
     controls.style.marginTop = '15px';
 
-    if (!logsExpanded && sortedLogs.length > 5) {
+    if (!logsExpanded && groupOrder.length > 5) {
         const btn = document.createElement('button');
         btn.textContent = 'もっと見る';
-        btn.className = 'tab-btn';
-        btn.style.padding = '5px 15px';
-        btn.style.fontSize = '12px';
+        btn.className = 'btn-outline';
         btn.onclick = () => { logsExpanded = true; renderLogs(); };
         controls.appendChild(btn);
     }
