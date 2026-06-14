@@ -57,12 +57,12 @@ jobs:
     - name: Run script
       env:
         LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
-      run: python ginga_kinan.py
+      run: python ginga.py
 
     - name: Commit and push changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add last_state.json docs/history.json docs/log_*.json
+        git add last_state.json docs/log_*.json
         git commit -m "Update last state and history [skip ci]" || exit 0
         git push
