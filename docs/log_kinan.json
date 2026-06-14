@@ -4330,5 +4330,285 @@
     "direction": "nobori",
     "seat_type": "プレミアルーム2",
     "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260703",
+    "direction": "kudari",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260703",
+    "direction": "kudari",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260703",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260703",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260706",
+    "direction": "kudari",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260706",
+    "direction": "kudari",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260706",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260706",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260710",
+    "direction": "kudari",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260710",
+    "direction": "kudari",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260710",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260710",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260713",
+    "direction": "kudari",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260713",
+    "direction": "kudari",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260713",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(下り)",
+    "depart": "京都",
+    "arrive": "新宮",
+    "target_date": "20260713",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260705",
+    "direction": "nobori",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260705",
+    "direction": "nobori",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260705",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260705",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260708",
+    "direction": "nobori",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260708",
+    "direction": "nobori",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260708",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260708",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260712",
+    "direction": "nobori",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260712",
+    "direction": "nobori",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260712",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-14T21:59:48.959367+09:00",
+    "train": "紀南コース(上り)",
+    "depart": "新宮",
+    "arrive": "京都",
+    "target_date": "20260712",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
   }
 ]
