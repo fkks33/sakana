@@ -142,5 +142,29 @@
   "kinan_20260713_紀南コース(下り)_クシェット": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260617_サンライズ瀬戸 (高松→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260617_サンライズ瀬戸 (高松→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260617_サンライズ出雲 (出雲市→東京)_ノビノビ座席": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260617_サンライズ出雲 (出雲市→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260617_サンライズ出雲 (出雲市→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260617_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
