@@ -166,5 +166,13 @@
   "sunrise_20260617_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260618_サンライズ出雲 (東京→出雲市)_ノビノビ座席": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260618_サンライズ出雲 (出雲市→東京)_サンライズツイン(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
