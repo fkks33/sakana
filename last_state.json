@@ -182,5 +182,17 @@
   "sanin_20260627_山陰コース(上り)_クシェット": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260619_サンライズ出雲 (東京→出雲市)_シングル(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260619_サンライズ瀬戸 (高松→東京)_シングルツイン(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260619_サンライズ出雲 (出雲市→東京)_シングルツイン(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
