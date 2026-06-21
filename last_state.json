@@ -262,5 +262,49 @@
   "sanin_20260701_山陰コース(上り)_クシェット": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ瀬戸 (東京→高松)_サンライズツイン(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ瀬戸 (高松→東京)_シングルデラックス(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ瀬戸 (高松→東京)_シングルデラックス(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ瀬戸 (高松→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ瀬戸 (高松→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ瀬戸 (高松→東京)_シングル(喫煙)": {
+    "status": "〇",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ瀬戸 (高松→東京)_サンライズツイン(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ出雲 (出雲市→東京)_ソロ": {
+    "status": "〇",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ出雲 (出雲市→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
+    "status": "〇",
+    "consecutive_count": 1
+  },
+  "sunrise_20260622_サンライズ出雲 (出雲市→東京)_サンライズツイン(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
