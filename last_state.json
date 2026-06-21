@@ -254,5 +254,13 @@
   "kinan_20260712_紀南コース(上り)_クシェット": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "kinan_20260720_紀南コース(下り)_クシェット": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sanin_20260701_山陰コース(上り)_クシェット": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
