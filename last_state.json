@@ -101,7 +101,7 @@
   },
   "kinan_20260715_紀南コース(上り)_クシェット": {
     "status": "△",
-    "consecutive_count": 3
+    "consecutive_count": 4
   },
   "sanin_20260615_山陰コース(下り)_クシェット": {
     "status": "△",
@@ -304,6 +304,10 @@
     "consecutive_count": 1
   },
   "sunrise_20260622_サンライズ出雲 (出雲市→東京)_サンライズツイン(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "kinan_20260722_紀南コース(上り)_クシェット": {
     "status": "△",
     "consecutive_count": 1
   }
