@@ -101,7 +101,7 @@
   },
   "kinan_20260715_紀南コース(上り)_クシェット": {
     "status": "△",
-    "consecutive_count": 4
+    "consecutive_count": 1
   },
   "sanin_20260615_山陰コース(下り)_クシェット": {
     "status": "△",
@@ -309,7 +309,7 @@
   },
   "kinan_20260722_紀南コース(上り)_クシェット": {
     "status": "△",
-    "consecutive_count": 1
+    "consecutive_count": 2
   },
   "sunrise_20260623_サンライズ瀬戸 (東京→高松)_ノビノビ座席": {
     "status": "△",
@@ -365,6 +365,10 @@
   },
   "sunrise_20260623_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
     "status": "〇",
+    "consecutive_count": 1
+  },
+  "kinan_20260705_紀南コース(上り)_プレミアルーム2": {
+    "status": "△",
     "consecutive_count": 1
   }
 }
