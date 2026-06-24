@@ -9838,5 +9838,165 @@
     "direction": "nobori",
     "seat_type": "プレミアルーム2",
     "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(下り)",
+    "depart": "京都",
+    "arrive": "出雲市",
+    "target_date": "20260626",
+    "direction": "kudari",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(下り)",
+    "depart": "京都",
+    "arrive": "出雲市",
+    "target_date": "20260626",
+    "direction": "kudari",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(下り)",
+    "depart": "京都",
+    "arrive": "出雲市",
+    "target_date": "20260626",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(下り)",
+    "depart": "京都",
+    "arrive": "出雲市",
+    "target_date": "20260626",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(下り)",
+    "depart": "京都",
+    "arrive": "出雲市",
+    "target_date": "20260629",
+    "direction": "kudari",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(下り)",
+    "depart": "京都",
+    "arrive": "出雲市",
+    "target_date": "20260629",
+    "direction": "kudari",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(下り)",
+    "depart": "京都",
+    "arrive": "出雲市",
+    "target_date": "20260629",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(下り)",
+    "depart": "京都",
+    "arrive": "出雲市",
+    "target_date": "20260629",
+    "direction": "kudari",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(上り)",
+    "depart": "出雲市",
+    "arrive": "京都",
+    "target_date": "20260627",
+    "direction": "nobori",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(上り)",
+    "depart": "出雲市",
+    "arrive": "京都",
+    "target_date": "20260627",
+    "direction": "nobori",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(上り)",
+    "depart": "出雲市",
+    "arrive": "京都",
+    "target_date": "20260627",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(上り)",
+    "depart": "出雲市",
+    "arrive": "京都",
+    "target_date": "20260627",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(上り)",
+    "depart": "出雲市",
+    "arrive": "京都",
+    "target_date": "20260701",
+    "direction": "nobori",
+    "seat_type": "クシェット",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(上り)",
+    "depart": "出雲市",
+    "arrive": "京都",
+    "target_date": "20260701",
+    "direction": "nobori",
+    "seat_type": "ファーストシート",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(上り)",
+    "depart": "出雲市",
+    "arrive": "京都",
+    "target_date": "20260701",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム1",
+    "result": "×"
+  },
+  {
+    "timestamp": "2026-06-25T07:19:08.708182+09:00",
+    "train": "山陰コース(上り)",
+    "depart": "出雲市",
+    "arrive": "京都",
+    "target_date": "20260701",
+    "direction": "nobori",
+    "seat_type": "プレミアルーム2",
+    "result": "×"
   }
 ]
