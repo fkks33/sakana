@@ -5878,5 +5878,405 @@
     "direction": "unknown",
     "seat_type": "サンライズツイン(喫煙)",
     "result": "×"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "ノビノビ座席",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルツイン(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルツイン(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルデラックス(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルデラックス(喫煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "ソロ",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングル(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングル(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "サンライズツイン(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (東京→高松)",
+    "depart": "東京",
+    "arrive": "高松",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "サンライズツイン(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "ノビノビ座席",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルツイン(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルツイン(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルデラックス(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルデラックス(喫煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "ソロ",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングル(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングル(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "サンライズツイン(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (東京→出雲市)",
+    "depart": "東京",
+    "arrive": "出雲市",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "サンライズツイン(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "ノビノビ座席",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルツイン(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルツイン(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルデラックス(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルデラックス(喫煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "ソロ",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングル(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングル(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "サンライズツイン(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ瀬戸 (高松→東京)",
+    "depart": "高松",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "サンライズツイン(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "ノビノビ座席",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルツイン(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルツイン(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルデラックス(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングルデラックス(喫煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "ソロ",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングル(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "シングル(喫煙)",
+    "result": "情報なし"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "サンライズツイン(禁煙)",
+    "result": "空席状況のご案内ができません"
+  },
+  {
+    "timestamp": "2026-06-27T08:08:59.824729+09:00",
+    "train": "サンライズ出雲 (出雲市→東京)",
+    "depart": "出雲市",
+    "arrive": "東京",
+    "target_date": "20260627",
+    "direction": "unknown",
+    "seat_type": "サンライズツイン(喫煙)",
+    "result": "情報なし"
   }
 ]
