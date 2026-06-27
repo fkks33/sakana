@@ -30,9 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupTheme() {
     const themeCheckbox = document.getElementById('theme-checkbox');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const savedTheme = localStorage.getItem('theme');
     
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+    if (prefersDark) {
         document.documentElement.setAttribute('data-theme', 'dark');
         themeCheckbox.checked = true;
         Chart.defaults.color = '#F7FAFC';
@@ -45,7 +44,7 @@ function setupTheme() {
     themeCheckbox.addEventListener('change', (e) => {
         const isDark = e.target.checked;
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
         
         Chart.defaults.color = isDark ? '#F7FAFC' : '#718096';
         if (seatChartInstance) seatChartInstance.update();
@@ -197,19 +196,46 @@ function renderStatusTable() {
 
     // Body
     const sortedKeys = Object.keys(grouped).sort();
-    sortedKeys.forEach(key => {
-        const item = grouped[key];
-        const tr = document.createElement('tr');
-        
-        let html = `<td data-label="列車名">${item.train}</td><td data-label="対象日"><strong>${formatDateStr(item.date)}</strong></td><td data-label="区間">${item.depart} → ${item.arrive}</td>`;
-        
+    
+    const createRowHTML = (item) => {
+        let html = `<tr><td data-label="列車名">${item.train}</td><td data-label="対象日"><strong>${formatDateStr(item.date)}</strong></td><td data-label="区間">${item.depart} → ${item.arrive}</td>`;
         seatArray.forEach(seat => {
             html += `<td data-label="${seat}">${getStatusBadge(item.seats[seat])}</td>`;
         });
-        
-        tr.innerHTML = html;
-        tbody.appendChild(tr);
+        html += `</tr>`;
+        return html;
+    };
+
+    const limit = 5;
+    const topKeys = sortedKeys.slice(0, limit);
+    
+    topKeys.forEach(key => {
+        tbody.innerHTML += createRowHTML(grouped[key]);
     });
+
+    const card = tbody.closest('.card');
+    let existingBtn = card.querySelector('.more-btn-container');
+    if (existingBtn) existingBtn.remove();
+
+    if (sortedKeys.length > limit) {
+        const btnContainer = document.createElement('div');
+        btnContainer.className = 'more-btn-container';
+        btnContainer.style.textAlign = 'center';
+        btnContainer.style.marginTop = '15px';
+        const btn = document.createElement('button');
+        btn.textContent = 'もっと見る';
+        btn.className = 'btn-outline';
+        btn.onclick = () => {
+            let fullHtml = `<div class="table-container"><table><thead><tr>${headHtml}</tr></thead><tbody>`;
+            sortedKeys.forEach(key => {
+                fullHtml += createRowHTML(grouped[key]);
+            });
+            fullHtml += `</tbody></table></div>`;
+            openModal('最近の空席状況', fullHtml);
+        };
+        btnContainer.appendChild(btn);
+        card.appendChild(btnContainer);
+    }
 }
 
 function getStatusBadge(status) {
@@ -340,7 +366,7 @@ function renderTimeline() {
     });
 
     events.sort((a, b) => b.time - a.time);
-    const limit = timelineExpanded ? 20 : 5;
+    const limit = 5;
     const topEvents = events.slice(0, limit);
 
     if (topEvents.length === 0) {
@@ -348,30 +374,45 @@ function renderTimeline() {
         return;
     }
 
-    topEvents.forEach(ev => {
-        const item = document.createElement('div');
-        item.className = 'timeline-item';
-        item.innerHTML = `
-            <div class="timeline-marker"></div>
-            <span class="timeline-time">${formatISODate(ev.time.toISOString())}</span>
-            <div class="timeline-content">
-                <strong>${ev.dateStr} ${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
-                <a href="${ev.url || 'https://e5489.jr-odekake.net/e5489/cspc/CBTopMenuPC'}" target="_blank" style="display: inline-block; margin-top: 5px; color: var(--primary); text-decoration: underline; font-size: 0.9em; font-weight: bold;"><i class="fa-solid fa-arrow-up-right-from-square"></i> 確認</a>
+    const createItemHTML = (ev) => {
+        return `
+            <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <span class="timeline-time">${formatISODate(ev.time.toISOString())}</span>
+                <div class="timeline-content">
+                    <strong>${ev.dateStr} ${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
+                    <a href="${ev.url || 'https://e5489.jr-odekake.net/e5489/cspc/CBTopMenuPC'}" target="_blank" style="display: inline-block; margin-top: 5px; color: var(--primary); text-decoration: underline; font-size: 0.9em; font-weight: bold;"><i class="fa-solid fa-arrow-up-right-from-square"></i> 確認</a>
+                </div>
             </div>
         `;
-        container.appendChild(item);
+    };
+
+    topEvents.forEach(ev => {
+        container.innerHTML += createItemHTML(ev);
     });
 
-    if (!timelineExpanded && events.length > 5) {
+    const card = container.closest('.card');
+    let existingBtn = card.querySelector('.more-btn-container');
+    if (existingBtn) existingBtn.remove();
+
+    if (events.length > limit) {
         const btnContainer = document.createElement('div');
+        btnContainer.className = 'more-btn-container';
         btnContainer.style.textAlign = 'center';
         btnContainer.style.marginTop = '15px';
         const btn = document.createElement('button');
         btn.textContent = 'もっと見る';
         btn.className = 'btn-outline';
-        btn.onclick = () => { timelineExpanded = true; renderTimeline(); };
+        btn.onclick = () => {
+            let fullHtml = `<div class="timeline" style="padding-top:10px;">`;
+            events.forEach(ev => {
+                fullHtml += createItemHTML(ev);
+            });
+            fullHtml += `</div>`;
+            openModal('検知タイムライン', fullHtml);
+        };
         btnContainer.appendChild(btn);
-        container.appendChild(btnContainer);
+        card.appendChild(btnContainer);
     }
 }
 
@@ -400,50 +441,42 @@ function renderLogs() {
         groups[log.timestamp].push(log);
     });
 
-    const limit = logsExpanded ? 20 : 5;
+    const limit = 5;
     const currentGroupKeys = groupOrder.slice(0, limit);
 
-    currentGroupKeys.forEach((ts) => {
+    const createGroupHTML = (ts) => {
         const logsInGroup = groups[ts];
         const trainName = logsInGroup[0].train;
         const totalQueries = logsInGroup.length;
         const availableCount = logsInGroup.filter(l => l.result === '○' || l.result === '〇' || l.result === '△').length;
         
-        const headerTr = document.createElement('tr');
-        headerTr.className = 'log-group-header';
-        headerTr.innerHTML = `
+        let html = `
+        <tr class="log-group-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'table-row' : 'none'; this.classList.toggle('open');">
             <td data-label="取得日時"><strong>${formatISODate(ts)}</strong></td>
             <td data-label="列車名">${trainName}</td>
             <td data-label="結果概要" colspan="3">照会数: ${totalQueries}件 / 空席検知: <strong style="color:var(--primary)">${availableCount}件</strong></td>
             <td data-label="詳細" style="text-align: right;"><i class="fa-solid fa-chevron-down"></i></td>
+        </tr>
+        <tr class="log-group-details" style="display: none;">
+            <td colspan="6" style="padding:0; border:none;">
+                <table style="margin: 0; box-shadow: none;"><tbody>
         `;
-        
-        const detailsTr = document.createElement('tr');
-        detailsTr.className = 'log-group-details';
-        detailsTr.style.display = 'none';
-        
-        let detailsHtml = '<td colspan="6" style="padding:0; border:none;"><table style="margin: 0; box-shadow: none;"><tbody>';
         logsInGroup.forEach(log => {
-            detailsHtml += `
+            html += `
                 <tr>
-                    <td data-label="区間" style="width: 25%; padding-left: 24px;">${log.depart} → ${log.arrive}</td>
-                    <td data-label="対象日" style="width: 25%;">${formatDateStr(log.target_date)}</td>
-                    <td data-label="席種" style="width: 25%;">${log.seat_type}</td>
-                    <td data-label="結果" style="width: 25%;">${getStatusBadge(log.result)}</td>
+                    <td data-label="区間">${log.depart} → ${log.arrive}</td>
+                    <td data-label="対象日">${formatDateStr(log.target_date)}</td>
+                    <td data-label="席種">${log.seat_type}</td>
+                    <td data-label="結果">${getStatusBadge(log.result)}</td>
                 </tr>
             `;
         });
-        detailsHtml += '</tbody></table></td>';
-        detailsTr.innerHTML = detailsHtml;
+        html += `</tbody></table></td></tr>`;
+        return html;
+    };
 
-        headerTr.onclick = () => {
-            const isHidden = detailsTr.style.display === 'none';
-            detailsTr.style.display = isHidden ? 'table-row' : 'none';
-            headerTr.classList.toggle('open', isHidden);
-        };
-
-        tbody.appendChild(headerTr);
-        tbody.appendChild(detailsTr);
+    currentGroupKeys.forEach((ts) => {
+        tbody.innerHTML += createGroupHTML(ts);
     });
 
     const controls = document.getElementById('pagination-controls');
@@ -452,11 +485,46 @@ function renderLogs() {
     controls.style.justifyContent = 'center';
     controls.style.marginTop = '15px';
 
-    if (!logsExpanded && groupOrder.length > 5) {
+    if (groupOrder.length > limit) {
         const btn = document.createElement('button');
         btn.textContent = 'もっと見る';
         btn.className = 'btn-outline';
-        btn.onclick = () => { logsExpanded = true; renderLogs(); };
+        btn.onclick = () => {
+            let fullHtml = `<div class="table-container"><table><thead><tr><th>取得日時</th><th>列車名</th><th colspan="3">結果概要</th><th>詳細</th></tr></thead><tbody>`;
+            groupOrder.forEach(ts => {
+                fullHtml += createGroupHTML(ts);
+            });
+            fullHtml += `</tbody></table></div>`;
+            openModal('アクセスログ', fullHtml);
+        };
         controls.appendChild(btn);
     }
 }
+
+/* ---------------------------------
+   Modal Logic
+--------------------------------- */
+function openModal(title, contentHtml) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = contentHtml;
+    const overlay = document.getElementById('modal-overlay');
+    overlay.style.display = 'flex';
+    void overlay.offsetWidth; // trigger reflow
+    overlay.classList.add('show');
+}
+
+function closeModal() {
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('show');
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        document.getElementById('modal-body').innerHTML = ''; // clean up
+    }, 300);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('modal-close')?.addEventListener('click', closeModal);
+    document.getElementById('modal-overlay')?.addEventListener('click', (e) => {
+        if (e.target.id === 'modal-overlay') closeModal();
+    });
+});
