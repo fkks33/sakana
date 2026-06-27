@@ -28,6 +28,22 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+:root[data-theme="dark"] {
+    --bg-color: #1A202C;
+    --card-bg: rgba(45, 55, 72, 0.85);
+    --text-main: #F7FAFC;
+    --text-muted: #A0AEC0;
+    
+    --primary: #E2A03F; 
+    --primary-light: rgba(226, 160, 63, 0.15);
+    --primary-hover: #F6C879;
+    
+    --sidebar-bg: #2D3748;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -449,6 +465,57 @@ tr:hover td {
 }
 
 /* ------------------
+   Toggle Switch (Dark Mode)
+   ------------------ */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin-left: auto;
+}
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #CBD5E0;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: var(--primary);
+}
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+.slider.round {
+  border-radius: 24px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+:root[data-theme="dark"] .slider {
+  background-color: #4A5568;
+}
+
+/* ------------------
    Charts Container
    ------------------ */
 .chart-container {
@@ -508,6 +575,86 @@ tr:hover td {
     .dashboard-grid {
         gap: 16px;
     }
+    
+    /* Table Card Layout for Mobile */
+    .table-container table, 
+    .table-container thead, 
+    .table-container tbody, 
+    .table-container th, 
+    .table-container td, 
+    .table-container tr { 
+        display: block; 
+    }
+    
+    .table-container thead tr { 
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .table-container > table > tbody > tr {
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: var(--radius-md);
+        margin-bottom: 16px;
+        padding: 8px 0;
+        background: var(--card-bg);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    :root[data-theme="dark"] .table-container > table > tbody > tr {
+        border-color: rgba(255,255,255,0.05);
+    }
+    
+    .table-container > table > tbody > tr > td { 
+        border: none;
+        border-bottom: 1px solid rgba(0,0,0,0.05); 
+        position: relative;
+        padding: 12px 16px 12px 40%; 
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        text-align: right;
+    }
+    
+    :root[data-theme="dark"] .table-container > table > tbody > tr > td {
+        border-bottom-color: rgba(255,255,255,0.05);
+    }
+    
+    .table-container > table > tbody > tr > td::before { 
+        position: absolute;
+        top: 50%;
+        left: 16px;
+        transform: translateY(-50%);
+        width: 35%; 
+        padding-right: 10px; 
+        white-space: nowrap;
+        text-align: left;
+        font-weight: 600;
+        content: attr(data-label);
+        color: var(--text-muted);
+        font-size: 13px;
+    }
+    
+    .table-container > table > tbody > tr > td:last-child {
+        border-bottom: 0;
+    }
+    
+    /* Logs Inner Table Override */
+    .log-group-details {
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .log-group-details table {
+        border: none;
+        box-shadow: none;
+    }
+    .log-group-details tr {
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+    }
 }
 
 /* Overlay for mobile sidebar */
@@ -566,14 +713,20 @@ tr:hover td {
     transform: rotate(180deg);
 }
 .log-group-details {
-    background-color: #FAFAFA;
+    background-color: rgba(0,0,0,0.02);
+}
+:root[data-theme="dark"] .log-group-details {
+    background-color: rgba(255,255,255,0.02);
 }
 .log-group-details table {
     margin: 10px 0;
-    background: white;
+    background: var(--card-bg);
     border: 1px solid rgba(0,0,0,0.05);
     border-radius: var(--radius-md);
     overflow: hidden;
+}
+:root[data-theme="dark"] .log-group-details table {
+    border-color: rgba(255,255,255,0.05);
 }
 .log-group-details th, .log-group-details td {
     padding: 8px 12px;

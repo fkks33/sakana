@@ -21,10 +21,41 @@ const CHART_COLORS = ['#C55A11', '#E2A03F', '#F6C879', '#F9E0B7', '#2D3748', '#7
 // Init
 let autoRefreshTimer = null;
 document.addEventListener('DOMContentLoaded', () => {
+    setupTheme();
     setupSidebar();
     loadData();
     startAutoRefresh();
 });
+
+function setupTheme() {
+    const themeCheckbox = document.getElementById('theme-checkbox');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeCheckbox.checked = true;
+        Chart.defaults.color = '#F7FAFC';
+    } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeCheckbox.checked = false;
+        Chart.defaults.color = '#718096';
+    }
+
+    themeCheckbox.addEventListener('change', (e) => {
+        const isDark = e.target.checked;
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        Chart.defaults.color = isDark ? '#F7FAFC' : '#718096';
+        if (seatChartInstance) seatChartInstance.update();
+        if (dayChartInstance) {
+            dayChartInstance.options.scales.x.ticks.color = Chart.defaults.color;
+            dayChartInstance.options.scales.y.ticks.color = Chart.defaults.color;
+            dayChartInstance.update();
+        }
+    });
+}
 
 function startAutoRefresh() {
     if (autoRefreshTimer) clearInterval(autoRefreshTimer);
@@ -170,10 +201,10 @@ function renderStatusTable() {
         const item = grouped[key];
         const tr = document.createElement('tr');
         
-        let html = `<td>${item.train}</td><td><strong>${formatDateStr(item.date)}</strong></td><td>${item.depart} → ${item.arrive}</td>`;
+        let html = `<td data-label="列車名">${item.train}</td><td data-label="対象日"><strong>${formatDateStr(item.date)}</strong></td><td data-label="区間">${item.depart} → ${item.arrive}</td>`;
         
         seatArray.forEach(seat => {
-            html += `<td>${getStatusBadge(item.seats[seat])}</td>`;
+            html += `<td data-label="${seat}">${getStatusBadge(item.seats[seat])}</td>`;
         });
         
         tr.innerHTML = html;
@@ -381,10 +412,10 @@ function renderLogs() {
         const headerTr = document.createElement('tr');
         headerTr.className = 'log-group-header';
         headerTr.innerHTML = `
-            <td><strong>${formatISODate(ts)}</strong></td>
-            <td>${trainName}</td>
-            <td colspan="3">照会数: ${totalQueries}件 / 空席検知: <strong style="color:var(--primary)">${availableCount}件</strong></td>
-            <td style="text-align: right;"><i class="fa-solid fa-chevron-down"></i></td>
+            <td data-label="取得日時"><strong>${formatISODate(ts)}</strong></td>
+            <td data-label="列車名">${trainName}</td>
+            <td data-label="結果概要" colspan="3">照会数: ${totalQueries}件 / 空席検知: <strong style="color:var(--primary)">${availableCount}件</strong></td>
+            <td data-label="詳細" style="text-align: right;"><i class="fa-solid fa-chevron-down"></i></td>
         `;
         
         const detailsTr = document.createElement('tr');
@@ -395,10 +426,10 @@ function renderLogs() {
         logsInGroup.forEach(log => {
             detailsHtml += `
                 <tr>
-                    <td style="width: 25%; padding-left: 24px;">${log.depart} → ${log.arrive}</td>
-                    <td style="width: 25%;">${formatDateStr(log.target_date)}</td>
-                    <td style="width: 25%;">${log.seat_type}</td>
-                    <td style="width: 25%;">${getStatusBadge(log.result)}</td>
+                    <td data-label="区間" style="width: 25%; padding-left: 24px;">${log.depart} → ${log.arrive}</td>
+                    <td data-label="対象日" style="width: 25%;">${formatDateStr(log.target_date)}</td>
+                    <td data-label="席種" style="width: 25%;">${log.seat_type}</td>
+                    <td data-label="結果" style="width: 25%;">${getStatusBadge(log.result)}</td>
                 </tr>
             `;
         });
