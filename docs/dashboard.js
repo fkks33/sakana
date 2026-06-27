@@ -302,7 +302,8 @@ function renderTimeline() {
                 dateStr: formatDateStr(res.target_date),
                 seat: res.seat_type,
                 status: res.result,
-                dir: res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : '')
+                dir: res.direction === 'kudari' ? '下り' : (res.direction === 'nobori' ? '上り' : ''),
+                url: res.url
             });
         }
     });
@@ -324,7 +325,7 @@ function renderTimeline() {
             <span class="timeline-time">${formatISODate(ev.time.toISOString())}</span>
             <div class="timeline-content">
                 <strong>${ev.dateStr} ${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
-                <a href="https://e5489.jr-odekake.net/e5489/cspc/CBTopMenuPC" target="_blank" style="display: inline-block; margin-top: 5px; color: var(--primary); text-decoration: underline; font-size: 0.9em; font-weight: bold;"><i class="fa-solid fa-arrow-up-right-from-square"></i> 予約画面(e5489)を開く</a>
+                <a href="${ev.url || 'https://e5489.jr-odekake.net/e5489/cspc/CBTopMenuPC'}" target="_blank" style="display: inline-block; margin-top: 5px; color: var(--primary); text-decoration: underline; font-size: 0.9em; font-weight: bold;"><i class="fa-solid fa-arrow-up-right-from-square"></i> 確認</a>
             </div>
         `;
         container.appendChild(item);

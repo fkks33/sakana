@@ -92,7 +92,8 @@ def run_availability_check(course_name, display_name, target_dates_str, search_c
                         "target_date": condition["date"],
                         "direction": condition.get("direction", "unknown"),
                         "seat_type": seat_name,
-                        "result": seat_status
+                        "result": seat_status,
+                        "url": url
                     }
                     logs_list.append(log_entry)
 
