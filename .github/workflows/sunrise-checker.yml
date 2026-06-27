@@ -2,8 +2,8 @@ name: Sunrise Checker
 
 on:
   schedule:
-    # 毎日 日本時間の朝07:00 (UTCの22:00) に実行
-    - cron: '0 22 * * *'
+    # JST 6:00 から JST 23:00 まで 1時間おき (UTC 21:00-23:00, 0:00-14:00) 混雑を避けるため毎時17分に実行
+    - cron: '17 0-14,21-23 * * *'
   workflow_dispatch: # 手動実行用ボタンも有効化
 
 permissions:

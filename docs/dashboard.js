@@ -324,6 +324,7 @@ function renderTimeline() {
             <span class="timeline-time">${formatISODate(ev.time.toISOString())}</span>
             <div class="timeline-content">
                 <strong>${ev.dateStr} ${ev.dir}</strong> の <strong>${ev.seat}</strong> に空き（${ev.status}）を検知しました。
+                <a href="https://e5489.jr-odekake.net/e5489/cspc/CBTopMenuPC" target="_blank" style="display: inline-block; margin-top: 5px; color: var(--primary); text-decoration: underline; font-size: 0.9em; font-weight: bold;"><i class="fa-solid fa-arrow-up-right-from-square"></i> 予約画面(e5489)を開く</a>
             </div>
         `;
         container.appendChild(item);
