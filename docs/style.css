@@ -223,7 +223,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: white;
+    background: var(--card-bg);
     padding: 8px 16px;
     border-radius: 20px;
     box-shadow: var(--shadow-sm);
@@ -240,7 +240,7 @@ body {
     justify-content: flex-start;
     gap: 16px;
     padding: 16px 24px;
-    background: white;
+    background: var(--sidebar-bg);
     box-shadow: var(--shadow-sm);
     position: sticky;
     top: 0;
