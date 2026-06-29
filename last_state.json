@@ -573,19 +573,19 @@
   },
   "sunrise_20260629_サンライズ瀬戸 (東京→高松)_ノビノビ座席": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (東京→高松)_ソロ": {
     "status": "〇",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (東京→高松)_シングル(禁煙)": {
     "status": "〇",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (東京→高松)_シングル(喫煙)": {
     "status": "〇",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (東京→高松)_サンライズツイン(喫煙)": {
     "status": "△",
@@ -593,11 +593,11 @@
   },
   "sunrise_20260629_サンライズ出雲 (東京→出雲市)_ノビノビ座席": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ出雲 (東京→出雲市)_シングル(喫煙)": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (高松→東京)_ノビノビ座席": {
     "status": "△",
@@ -605,43 +605,43 @@
   },
   "sunrise_20260629_サンライズ瀬戸 (高松→東京)_ソロ": {
     "status": "〇",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (高松→東京)_シングル(禁煙)": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (高松→東京)_シングル(喫煙)": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (高松→東京)_サンライズツイン(禁煙)": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ瀬戸 (高松→東京)_サンライズツイン(喫煙)": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ出雲 (出雲市→東京)_ノビノビ座席": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ出雲 (出雲市→東京)_ソロ": {
     "status": "〇",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ出雲 (出雲市→東京)_シングル(禁煙)": {
-    "status": "〇",
-    "consecutive_count": 2
+    "status": "△",
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
     "status": "〇",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "sunrise_20260629_サンライズ出雲 (出雲市→東京)_サンライズツイン(禁煙)": {
     "status": "△",
-    "consecutive_count": 2
+    "consecutive_count": 3
   },
   "kinan_20260712_紀南コース(上り)_プレミアルーム2": {
     "status": "△",
@@ -649,6 +649,10 @@
   },
   "kinan_20260729_紀南コース(上り)_クシェット": {
     "status": "〇",
+    "consecutive_count": 1
+  },
+  "sunrise_20260629_サンライズ瀬戸 (東京→高松)_シングルツイン(禁煙)": {
+    "status": "△",
     "consecutive_count": 1
   }
 }
