@@ -451,7 +451,7 @@ function renderLogs() {
         const availableCount = logsInGroup.filter(l => l.result === '○' || l.result === '〇' || l.result === '△').length;
         
         let html = `
-        <tr class="log-group-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'table-row' : 'none'; this.classList.toggle('open');">
+        <tr class="log-group-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? '' : 'none'; this.classList.toggle('open');">
             <td data-label="取得日時"><strong>${formatISODate(ts)}</strong></td>
             <td data-label="列車名">${trainName}</td>
             <td data-label="結果概要" colspan="3">照会数: ${totalQueries}件 / 空席検知: <strong style="color:var(--primary)">${availableCount}件</strong></td>
