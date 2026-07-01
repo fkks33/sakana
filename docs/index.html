@@ -3,169 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sakana Insight - 列車空席照会</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome for Icons -->
+    <title>Sakana Insight - 列車空席照会 (v2)</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
+    <!-- Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+    <div id="app" class="app-container">
+        <!-- Sidebar -->
+        <aside id="sidebar-container" class="sidebar-container"></aside>
+        
+        <!-- Mobile Overlay -->
+        <div id="mobile-overlay" class="mobile-overlay"></div>
 
-    <!-- Mobile Header -->
-    <div class="mobile-header">
-        <button class="menu-toggle" id="menu-toggle">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <div class="card-title">
-            <i class="fa-solid fa-fish"></i> Sakana Insight
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h2 id="page-title" class="page-title">Loading...</h2>
+                </div>
+                <div class="page-meta">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="last-updated">最終更新: --</span>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <!-- Status Table -->
+                <section class="card col-8">
+                    <header class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-list-check"></i> 最近の空席状況</h3>
+                    </header>
+                    <div id="status-table-container"></div>
+                </section>
+
+                <!-- Donut Chart -->
+                <section class="card col-4">
+                    <header class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-chart-pie"></i> 席種別 空席出現率</h3>
+                    </header>
+                    <div class="chart-wrapper donut-wrapper">
+                        <canvas id="seatChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Bar Chart -->
+                <section class="card col-8">
+                    <header class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-chart-bar"></i> 曜日別 空席検知傾向</h3>
+                    </header>
+                    <div class="chart-wrapper">
+                        <canvas id="dayChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Timeline -->
+                <section class="card col-4">
+                    <header class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> 検知タイムライン</h3>
+                    </header>
+                    <div id="timeline-container"></div>
+                </section>
+
+                <!-- Access Logs -->
+                <section class="card col-12">
+                    <header class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-database"></i> アクセスログ</h3>
+                    </header>
+                    <div id="access-logs-container"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Generic Modal Component -->
+    <div id="app-modal" class="modal-overlay">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h3 id="modal-title">Modal Title</h3>
+                <button id="modal-close" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </header>
+            <div id="modal-body" class="modal-body"></div>
         </div>
     </div>
 
-    <!-- Sidebar Overlay for Mobile -->
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h1><i class="fa-solid fa-fish"></i> Sakana Insight</h1>
-        </div>
-        <div class="sidebar-nav">
-            <div class="nav-group">
-                <div class="nav-title">Train Routes</div>
-                
-                <!-- Sunrise -->
-                <div class="nav-item tab-btn" data-course="sunrise">
-                    <i class="fa-solid fa-moon"></i> 寝台特急サンライズ
-                </div>
-                
-                <!-- Ginga -->
-                <div class="nav-item">
-                    <i class="fa-solid fa-star"></i> WEST EXPRESS 銀河
-                </div>
-                <div class="nav-sub">
-                    <div class="nav-item tab-btn" data-course="sanin">山陰コース</div>
-                    <div class="nav-item tab-btn active" data-course="kinan">紀南コース</div>
-                </div>
-            </div>
-            
-            <div class="nav-group" style="margin-top: 32px;">
-                <div class="nav-title">Settings</div>
-                <div class="nav-item" style="cursor: default;">
-                    <i class="fa-solid fa-moon"></i> ダークモード
-                    <label class="switch">
-                        <input type="checkbox" id="theme-checkbox">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="top-header">
-            <h2 class="page-title" id="display-title">WEST EXPRESS 銀河（紀南コース）</h2>
-            <div class="page-meta">
-                <i class="fa-regular fa-clock"></i>
-                <span id="last-updated">最終更新: 取得中...</span>
-            </div>
-        </div>
-
-        <div class="dashboard-grid">
-            
-            <!-- 最近の空席状況 -->
-            <div class="card col-8">
-                <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-list-check"></i> 最近の空席状況</div>
-                </div>
-                <div class="table-container">
-                    <table id="status-table">
-                        <thead>
-                            <tr id="status-table-header">
-                                <!-- JSで動的生成 -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- JSで動的生成 -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 空席出現率 (席種別) -->
-            <div class="card col-4">
-                <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-chart-pie"></i> 席種別 空席出現率</div>
-                </div>
-                <div class="chart-container donut-container">
-                    <canvas id="seatChart"></canvas>
-                </div>
-            </div>
-
-            <!-- 空席出現率 (曜日別) -->
-            <div class="card col-8">
-                <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-chart-bar"></i> 曜日別 空席検知傾向</div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="dayChart"></canvas>
-                </div>
-            </div>
-
-            <!-- タイムライン -->
-            <div class="card col-4">
-                <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> 検知タイムライン</div>
-                </div>
-                <div class="timeline" id="timeline-container">
-                    <!-- JSで動的生成 -->
-                </div>
-            </div>
-
-            <!-- 詳細ログ (ページネーション) -->
-            <div class="card col-12">
-                <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-database"></i> アクセスログ</div>
-                </div>
-                <div class="table-container">
-                    <table id="log-table">
-                        <thead>
-                            <tr>
-                                <th>取得日時</th>
-                                <th>列車名</th>
-                                <th>区間</th>
-                                <th>対象日</th>
-                                <th>席種</th>
-                                <th>結果</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- JSで動的生成 -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Pagination -->
-                <div class="pagination" id="pagination-controls">
-                    <!-- JSで動的生成 -->
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-    <!-- Modal Overlay -->
-    <div class="modal-overlay" id="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 id="modal-title">詳細</h3>
-                <button class="modal-close" id="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="modal-body"></div>
-        </div>
-    </div>
-
-    <script src="dashboard.js"></script>
+    <!-- Main JS Module -->
+    <script type="module" src="./js/main.js"></script>
 </body>
 </html>
