@@ -1138,5 +1138,41 @@
   "sunrise_20260712_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ瀬戸 (東京→高松)_ノビノビ座席": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ瀬戸 (東京→高松)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ出雲 (東京→出雲市)_ノビノビ座席": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ瀬戸 (高松→東京)_シングルデラックス(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ瀬戸 (高松→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ瀬戸 (高松→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ瀬戸 (高松→東京)_シングル(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ出雲 (出雲市→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260713_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
