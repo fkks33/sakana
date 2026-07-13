@@ -100,8 +100,8 @@
     "consecutive_count": 1
   },
   "kinan_20260715_紀南コース(上り)_クシェット": {
-    "status": "〇",
-    "consecutive_count": 2
+    "status": "△",
+    "consecutive_count": 3
   },
   "sanin_20260615_山陰コース(下り)_クシェット": {
     "status": "△",
@@ -309,7 +309,7 @@
   },
   "kinan_20260722_紀南コース(上り)_クシェット": {
     "status": "△",
-    "consecutive_count": 3
+    "consecutive_count": 4
   },
   "sunrise_20260623_サンライズ瀬戸 (東京→高松)_ノビノビ座席": {
     "status": "△",
@@ -1105,7 +1105,7 @@
   },
   "kinan_20260809_紀南コース(上り)_クシェット": {
     "status": "△",
-    "consecutive_count": 3
+    "consecutive_count": 4
   },
   "kinan_20260726_紀南コース(上り)_ファーストシート": {
     "status": "△",
