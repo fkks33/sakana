@@ -1302,5 +1302,17 @@
   "kinan_20260719_紀南コース(上り)_ファーストシート": {
     "status": "△",
     "consecutive_count": 4
+  },
+  "sunrise_20260718_サンライズ瀬戸 (東京→高松)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260718_サンライズ出雲 (東京→出雲市)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260718_サンライズ瀬戸 (高松→東京)_シングル(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
