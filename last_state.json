@@ -1430,5 +1430,21 @@
   "kinan_20260809_紀南コース(上り)_ファーストシート": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260725_サンライズ出雲 (東京→出雲市)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260725_サンライズ出雲 (東京→出雲市)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260725_サンライズ出雲 (出雲市→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260725_サンライズ出雲 (出雲市→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
