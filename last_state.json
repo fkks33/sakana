@@ -1518,5 +1518,29 @@
   "kinan_20260826_紀南コース(上り)_プレミアルーム2": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260729_サンライズ出雲 (東京→出雲市)_ノビノビ座席": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260729_サンライズ瀬戸 (高松→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260729_サンライズ瀬戸 (高松→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260729_サンライズ出雲 (出雲市→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260729_サンライズ出雲 (出雲市→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260729_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
