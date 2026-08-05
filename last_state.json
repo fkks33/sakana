@@ -1714,5 +1714,17 @@
   "sunrise_20260805_サンライズ出雲 (出雲市→東京)_ソロ": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260806_サンライズ瀬戸 (高松→東京)_ノビノビ座席": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260806_サンライズ瀬戸 (高松→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260806_サンライズ出雲 (出雲市→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
