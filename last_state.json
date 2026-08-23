@@ -2042,5 +2042,33 @@
   "kinan_20260923_紀南コース(上り)_クシェット": {
     "status": "△",
     "consecutive_count": 1
+  },
+  "sunrise_20260824_サンライズ瀬戸 (高松→東京)_シングルデラックス(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260824_サンライズ瀬戸 (高松→東京)_シングルデラックス(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260824_サンライズ瀬戸 (高松→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260824_サンライズ瀬戸 (高松→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260824_サンライズ出雲 (出雲市→東京)_シングルデラックス(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260824_サンライズ出雲 (出雲市→東京)_ソロ": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "sunrise_20260824_サンライズ出雲 (出雲市→東京)_シングル(禁煙)": {
+    "status": "△",
+    "consecutive_count": 1
   }
 }
