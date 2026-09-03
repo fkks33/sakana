@@ -31,9 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial fetch
     store.fetchLogs();
+    store.fetchConfig();
     
     // Auto refresh every 5 minutes
     setInterval(() => {
         store.fetchLogs();
+        store.fetchConfig();
     }, 300000);
 });

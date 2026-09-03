@@ -1,13 +1,49 @@
 import store from '../store.js';
 import { formatDateStr, getStatusBadge } from '../utils.js';
 import { showModal } from './Modal.js';
+import { openSunriseDateModal } from './SunriseDateModal.js';
+
+function getSunriseBannerHtml() {
+    const { currentCourse, config } = store.state;
+    if (currentCourse !== 'sunrise') return '';
+
+    const sunriseConf = config?.sunrise || {};
+    const extraDates = Array.isArray(sunriseConf.target_dates) 
+        ? sunriseConf.target_dates 
+        : (Array.isArray(sunriseConf) ? sunriseConf : []);
+
+    return `
+        <div class="sunrise-target-bar">
+            <div class="target-bar-left">
+                <span class="target-bar-label"><i class="fa-solid fa-calendar-check"></i> 取得対象日:</span>
+                <span class="target-badge default"><i class="fa-solid fa-bolt"></i> 当日の便 (自動)</span>
+                ${extraDates.map(d => `<span class="target-badge custom"><i class="fa-solid fa-calendar-day"></i> ${formatDateStr(d)}</span>`).join('')}
+                ${extraDates.length === 0 ? '<span class="target-hint">※ 追加指定日なし</span>' : ''}
+            </div>
+            <button type="button" id="open-sunrise-modal-btn" class="btn btn-sm btn-outline">
+                <i class="fa-solid fa-calendar-plus"></i> 対象日を追加・管理
+            </button>
+        </div>
+    `;
+}
+
+function attachBannerEvent() {
+    const btn = document.getElementById('open-sunrise-modal-btn');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            openSunriseDateModal();
+        });
+    }
+}
 
 export function renderStatusTable() {
     const container = document.getElementById('status-table-container');
     const { logs } = store.state;
+    const bannerHtml = getSunriseBannerHtml();
 
     if (!logs || logs.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-tertiary); text-align: center; padding: 20px;">データがありません</p>';
+        container.innerHTML = bannerHtml + '<p style="color: var(--text-tertiary); text-align: center; padding: 20px;">データがありません</p>';
+        attachBannerEvent();
         return;
     }
 
@@ -65,7 +101,8 @@ export function renderStatusTable() {
         </div>`;
     }
 
-    container.innerHTML = html;
+    container.innerHTML = bannerHtml + html;
+    attachBannerEvent();
 
     const btn = document.getElementById('status-more-btn');
     if (btn) {

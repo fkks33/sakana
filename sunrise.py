@@ -1,10 +1,41 @@
+import json
+import os
 from datetime import datetime
-from utils.date_utils import get_jst_now
+from utils.date_utils import get_jst_now, filter_target_dates
 from utils.runner import run_availability_check
 
-def main():
+def load_config():
+    config_path = "config.json"
+    if not os.path.exists(config_path):
+        config_path = os.path.join("docs", "config.json")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Failed to load config.json: {e}")
+    return {}
+
+def get_target_dates(config):
     today = get_jst_now().strftime("%Y%m%d")
-    target_dates = [today]
+    dates_set = {today}
+    
+    sunrise_conf = config.get("sunrise", [])
+    if isinstance(sunrise_conf, dict):
+        extra_dates = sunrise_conf.get("target_dates", [])
+    elif isinstance(sunrise_conf, list):
+        extra_dates = sunrise_conf
+    else:
+        extra_dates = []
+
+    filtered = filter_target_dates(extra_dates)
+    dates_set.update(filtered)
+    
+    return sorted(list(dates_set))
+
+def main():
+    config = load_config()
+    target_dates = get_target_dates(config)
 
     base_hour = "18"
     base_minute = "00"
