@@ -1,5 +1,4 @@
 import store, { courseNames } from '../store.js';
-import { openSunriseDateModal } from './SunriseDateModal.js';
 
 export function renderSidebar() {
     const container = document.getElementById('sidebar-container');
@@ -27,14 +26,15 @@ export function renderSidebar() {
             </div>
             
             <div class="nav-section">
-                <div class="nav-section-title">Settings</div>
-                <div class="nav-item" id="sunrise-dates-settings">
-                    <i class="fa-solid fa-calendar-days"></i> サンライズ対象日
-                </div>
+                <div class="nav-section-title">Settings & Docs</div>
                 <div class="nav-item" id="theme-toggle">
                     <i class="fa-solid ${store.state.theme === 'dark' ? 'fa-sun' : 'fa-moon'}"></i> 
                     ${store.state.theme === 'dark' ? 'ライトモード' : 'ダークモード'}
                 </div>
+                <a href="./specification.html" target="_blank" class="nav-item" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fa-solid fa-book"></i> 技術仕様書
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.75rem; margin-left: auto; opacity: 0.6;"></i>
+                </a>
             </div>
         </div>
     `;
@@ -46,14 +46,6 @@ export function renderSidebar() {
             store.setState({ isSidebarOpen: false });
         });
     });
-
-    const sunriseDatesBtn = container.querySelector('#sunrise-dates-settings');
-    if (sunriseDatesBtn) {
-        sunriseDatesBtn.addEventListener('click', () => {
-            openSunriseDateModal();
-            store.setState({ isSidebarOpen: false });
-        });
-    }
 
     container.querySelector('#theme-toggle').addEventListener('click', () => {
         store.toggleTheme();

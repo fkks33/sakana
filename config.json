@@ -1,6 +1,8 @@
 {
   "sunrise": {
-    "target_dates": []
+    "target_dates": [
+      "20260920"
+    ]
   },
   "kinan": {
     "kyoto_to_shingu": [

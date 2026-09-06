@@ -13,29 +13,25 @@ def load_config():
             with open(config_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
-            print(f"Failed to load config.json: {e}")
+            print(f"config.jsonの読み込みエラー: {e}")
     return {}
-
-def get_target_dates(config):
-    today = get_jst_now().strftime("%Y%m%d")
-    dates_set = {today}
-    
-    sunrise_conf = config.get("sunrise", [])
-    if isinstance(sunrise_conf, dict):
-        extra_dates = sunrise_conf.get("target_dates", [])
-    elif isinstance(sunrise_conf, list):
-        extra_dates = sunrise_conf
-    else:
-        extra_dates = []
-
-    filtered = filter_target_dates(extra_dates)
-    dates_set.update(filtered)
-    
-    return sorted(list(dates_set))
 
 def main():
     config = load_config()
-    target_dates = get_target_dates(config)
+    today = get_jst_now().strftime("%Y%m%d")
+    
+    sunrise_conf = config.get("sunrise", {})
+    if isinstance(sunrise_conf, dict):
+        configured_dates = sunrise_conf.get("target_dates", [])
+    elif isinstance(sunrise_conf, list):
+        configured_dates = sunrise_conf
+    else:
+        configured_dates = []
+
+    valid_dates = filter_target_dates(configured_dates)
+    
+    # 当日便に加えてconfigで指定された有効な日付（1ヶ月以内）を対象とする（重複排除・昇順）
+    target_dates = sorted(list(set([today] + valid_dates)))
 
     base_hour = "18"
     base_minute = "00"
