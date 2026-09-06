@@ -1773,7 +1773,7 @@
   },
   "kinan_20260907_紀南コース(下り)_クシェット": {
     "status": "△",
-    "consecutive_count": 1
+    "consecutive_count": 2
   },
   "sunrise_20260809_サンライズ瀬戸 (高松→東京)_ソロ": {
     "status": "△",
@@ -1793,7 +1793,7 @@
   },
   "kinan_20260909_紀南コース(上り)_クシェット": {
     "status": "△",
-    "consecutive_count": 4
+    "consecutive_count": 1
   },
   "kinan_20260909_紀南コース(上り)_ファーストシート": {
     "status": "△",
@@ -2220,6 +2220,10 @@
     "consecutive_count": 1
   },
   "sunrise_20260906_サンライズ出雲 (出雲市→東京)_シングル(喫煙)": {
+    "status": "△",
+    "consecutive_count": 1
+  },
+  "kinan_20260930_紀南コース(上り)_クシェット": {
     "status": "△",
     "consecutive_count": 1
   }
